@@ -8,74 +8,74 @@ var dimensionModel = "http://localhost/ontowiki/sdmx-dimension";
 
 $(document).ready(function () {
     if(typeof isTabular != "undefined" && isTabular == true ) return;
-    
+
     // load RDFa
     var rdf_script = document.createElement( 'script' );
     rdf_script.type = 'text/javascript';
     rdf_script.src = RDFAUTHOR_BASE+"src/rdfauthor.js";
     $('body').append( rdf_script );
-        
+
     // on ready
     RDFAUTHOR_READY_CALLBACK = function () {
         // default graph
         RDFauthor.setInfoForGraph(RDFAUTHOR_DEFAULT_GRAPH, "queryEndpoint", urlBase+"sparql");
         RDFauthor.setInfoForGraph(RDFAUTHOR_DEFAULT_GRAPH, "updateEndpoint", urlBase+"update");
-      
+
         // attribute endpoint
         RDFauthor.setInfoForGraph(attributeModel, "queryEndpoint", urlBase+"sparql");
         RDFauthor.setInfoForGraph(attributeModel, "updateEndpoint", urlBase+"update");
-        
+
         // concept endpoint
         RDFauthor.setInfoForGraph(conceptModel, "queryEndpoint", urlBase+"sparql");
         RDFauthor.setInfoForGraph(conceptModel, "updateEndpoint", urlBase+"update");
-        
+
         // dim endpoint
         RDFauthor.setInfoForGraph(dimensionModel, "queryEndpoint", urlBase+"sparql");
         RDFauthor.setInfoForGraph(dimensionModel, "updateEndpoint", urlBase+"update");
     };
-    
+
     // check for trailing slash
-    var checkSlash = function(uri){        
-        if( uri.charAt(uri.length - 1) != "/" ){ 
+    var checkSlash = function(uri){
+        if( uri.charAt(uri.length - 1) != "/" ){
             uri += '/';
         }
         return uri;
     }
-        
+
     // set uribase value
     if( uribase.length < 1 && typeof salt != 'undefined' ){
-        uribase = RDFAUTHOR_DEFAULT_GRAPH + '/' + salt + '/';    
+        uribase = RDFAUTHOR_DEFAULT_GRAPH + '/' + salt + '/';
     }
     $("#uribase").val(uribase);
-    
+
     $("#uribase").keyup(function(){
         if( $(this).val().length < 3 ) return;
         var oldbase = uribase;
         uribase = $(this).val();
-        
+
         // temp vars for new keys
         var newKey = '';
         var newEKey = '';
-        
+
         for (d in dimensions) {
             newKey = checkSlash( d.replace(oldbase, uribase) );
             dimensions[newKey] = dimensions[d];
-            
+
             for(e in dimensions[d]["elements"]){
                 newEKey = checkSlash( e.replace(oldbase, uribase) );
                 dimensions[newKey]["elements"][newEKey] = dimensions[d]["elements"][e];
-                
+
                 // delete old elements
                 delete dimensions[d]["elements"][e];
             }
-            
-            // delete old stuff            
+
+            // delete old stuff
             delete dimensions[d];
         }
-        
+
         dimensions.uribase = uribase;
     });
-    
+
     /* functions */
     var _getColor = function () {
         var r = Math.round(Math.random() * (90 - 50) + 50);
@@ -124,7 +124,7 @@ $(document).ready(function () {
 
             if($.trim($(this).text()).length < 1) return;
 
-            if (!$(this).hasClass('csv-highlighted')) {
+            if (!$(this).hasClass('csv-highlighted') && $(this).text().length > 0 ) {
                 $(this).data('dimension', null);
                 $(this).css('background-color', currentColor);
                 $(this).addClass('csv-highlighted');
@@ -153,7 +153,7 @@ $(document).ready(function () {
         var col = ids[1].replace('c', '');
 
         if (selectionMode == 'dimension') {
-            
+
             if ( dimensions[currentDimension].attribute ){
                 // attributes stuff here
                 if (!$(this).hasClass('csv-highlighted')) {
@@ -165,7 +165,7 @@ $(document).ready(function () {
                         dimensions[currentDimension].value = '';
                         dimensions[currentDimension].selected = false;
                     }
-                    
+
                     $(this).data('dimension', null);
                     $(this).css('background-color', currentColor);
                     $(this).addClass('csv-highlighted');
@@ -184,7 +184,7 @@ $(document).ready(function () {
                     dimensions[currentDimension].value = '';
                     dimensions[currentDimension].selected = false;
                 }
-            } else { 
+            } else {
                 // dimensions stuff here
                 if (!$(this).hasClass('csv-highlighted')) {
                     $(this).data('dimension', null);
@@ -228,7 +228,7 @@ $(document).ready(function () {
     $('#btn-add-dimension').click(function () {
         var name = prompt('Dimension name:');
         if ( typeof name == 'undefined' || name.length < 1) return;
-        
+
         var eid = name.replace(" ","_");
         var dimensionInfo = {
             color: _getColor(),
@@ -239,14 +239,14 @@ $(document).ready(function () {
         dimensions[dimensionURI] = dimensionInfo;
         currentDimension = dimensionURI;
         currentColor = dimensionInfo.color;
-        var htmlText = '<tr style="background-color:' + currentColor + '"><td name="'+name+'">' + name; 
+        var htmlText = '<tr style="background-color:' + currentColor + '"><td name="'+name+'">' + name;
         htmlText += '<br/><sub>subPropertyOf:</sub><span id="dim_'+eid+'_0"></span>'+
                     '<sub>concept:</sub><span id="dim_'+eid+'_1"></span>';
         htmlText += '</td></tr>';
         var tr = $(htmlText).data('dimension', name);
 
         $('#csvimport-dimensions').append(tr);
-        
+
         // property selector
         _subjectURI = "http://"+window.location.host+"/ontowiki/somegraph";
         var input0 = $("#dim_"+eid+"_0");
@@ -258,10 +258,10 @@ $(document).ready(function () {
                 dimensions[dimensionURI].subproperty = uri;
             }
         };
-        // FIXME: title hack        
+        // FIXME: title hack
         _propertySelector = new ObjectSelector(dimensionModel, _subjectURI, "http://www.w3.org/2000/01/rdf-schema#subPropertyOf", selectorOptions);
         _propertySelector.presentInContainer();
-        
+
         // property selector 2
         var input1 = $("#dim_"+eid+"_1");
         selectorOptions = {
@@ -274,9 +274,9 @@ $(document).ready(function () {
         };
         _propertySelector = new ObjectSelector(conceptModel, _subjectURI, "http://purl.org/linked-data/cube#concept", selectorOptions);
         _propertySelector.presentInContainer();
-        
+
     });
-    
+
     $('#csvimport-dimensions tr').live('click', function () {
         var name = $(this).children('td').eq(0).attr("name");
 
@@ -285,9 +285,9 @@ $(document).ready(function () {
             URI = _getURI(name);
         }
 
-        var dimInfo = dimensions[URI];        
-        currentDimension = URI;        
-        currentColor = dimInfo.color;        
+        var dimInfo = dimensions[URI];
+        currentDimension = URI;
+        currentColor = dimInfo.color;
     });
 
     $('#csvimport-dimensions tr').live('dblclick', function () {
@@ -307,20 +307,20 @@ $(document).ready(function () {
 
 
     /*
-     * DATA RANGE 
+     * DATA RANGE
      */
     $('#btn-datarange').live('click', function () {
         alert('Click on the upper left, then on the lower right data cell.');
         selectionMode = 'start';
     });
-    
+
     /*
-     * ATTRIBUTES STUFF 
+     * ATTRIBUTES STUFF
      */
-    $('#btn-attribute').live('click', function () {        
+    $('#btn-attribute').live('click', function () {
         var name = prompt('Attribute name:');
         if ( typeof name == 'undefined' || name.length < 1) return;
-        
+
         var eid = name.replace(" ","_");
         var attributeInfo = {
             color: _getColor(),
@@ -336,13 +336,13 @@ $(document).ready(function () {
         dimensions[attributeURI] = attributeInfo;
         currentDimension = attributeURI;
         currentColor = attributeInfo.color;
-        var htmlText = '<tr style="background-color:' + currentColor + '"><td name="'+name+'">' + name; 
+        var htmlText = '<tr style="background-color:' + currentColor + '"><td name="'+name+'">' + name;
         htmlText += '<br/><sub>attribute:</sub><span id="attr_'+eid+'_0"></span>';
         htmlText += '</td></tr>';
         var tr = $(htmlText).data('attribute', name);
 
         $('#csvimport-attributes').append(tr);
-        
+
         // property selector
         _subjectURI = "http://"+window.location.host+"/ontowiki/somegraph";
         var input0 = $("#attr_"+eid+"_0");
@@ -354,13 +354,13 @@ $(document).ready(function () {
                 dimensions[attributeURI].uri = uri;
             }
         };
-        // FIXME: title hack        
+        // FIXME: title hack
         _propertySelector = new ObjectSelector(attributeModel, _subjectURI, "http://www.w3.org/2000/01/rdf-schema#subPropertyOf", selectorOptions);
         _propertySelector.presentInContainer();
-        
-        
+
+
     });
-    
+
     $('#csvimport-attributes tr').live('click', function () {
         var name = $(this).children('td').eq(0).attr("name");
 
@@ -369,9 +369,9 @@ $(document).ready(function () {
             URI = _getURI(name);
         }
 
-        var dimInfo = dimensions[URI];        
-        currentDimension = URI;        
-        currentColor = dimInfo.color;        
+        var dimInfo = dimensions[URI];
+        currentDimension = URI;
+        currentColor = dimInfo.color;
     });
 
     $('#csvimport-attributes tr').live('dblclick', function () {
@@ -389,7 +389,7 @@ $(document).ready(function () {
         $(this).children('td').eq(0).attr("name",newName);
     });
 
-    
+
     /*
      * EXTRACT BTN
      */
@@ -406,7 +406,7 @@ $(document).ready(function () {
             }
 
             for (d in dimensions) {
-                
+
                 if( typeof dimensions[d].attribute != 'undefined' && dimensions[d].attribute == true ){
                     if(dimensions[d].uri.length < 1){
                         alert('One or several attributes missing URI!');
@@ -418,7 +418,7 @@ $(document).ready(function () {
                     }
                 }
             }
-            
+
             dimensions.uribase = uribase;
         }
 
@@ -446,9 +446,9 @@ function useCSVConfiguration(config) {
     // decode JSON
     decodedConfig = true;
     dimensions = $.evalJSON(config);
-    
+
     uribase = '0';
-    if( typeof dimensions["uribase"] == "undefined" || dimensions["uribase"].length < 1 ){ 
+    if( typeof dimensions["uribase"] == "undefined" || dimensions["uribase"].length < 1 ){
         uribase = RDFAUTHOR_DEFAULT_GRAPH + '/' + salt + '/';
     }else{
         uribase = dimensions["uribase"];
@@ -472,14 +472,14 @@ function useCSVConfiguration(config) {
 
 function appendDimension(dim, label, color, subproperty, concept){
     var eid = $.trim(label);
-    var htmlText = '<tr style="background-color:' + color + '" about="'+dim+'"><td name="'+label+'">' + label; 
+    var htmlText = '<tr style="background-color:' + color + '" about="'+dim+'"><td name="'+label+'">' + label;
         htmlText += '<br/><sub>subPropertyOf:</sub><span id="dim_'+eid+'_0"></span>';
         htmlText += '<sub>concept:</sub><span id="dim_'+eid+'_1"></span>';
         htmlText += '</td></tr>';
-    
+
     var tr = $(htmlText).data('dimension', label);
     $('#csvimport-dimensions').append(tr);
-    
+
     var dimensionURI = dim;
     // property selector
     _subjectURI = "http://"+window.location.host+"/ontowiki/somegraph";
@@ -492,12 +492,12 @@ function appendDimension(dim, label, color, subproperty, concept){
             dimensions[dimensionURI].subproperty = uri;
         }
     };
-    // FIXME: title hack        
+    // FIXME: title hack
     _propertySelector = new ObjectSelector(dimensionModel, _subjectURI, "http://www.w3.org/2000/01/rdf-schema#subPropertyOf", selectorOptions);
     _propertySelector.presentInContainer();
-    
+
     $("input", input0).val(subproperty);
-    
+
     // property selector 2
     var input1 = $("#dim_"+eid+"_1");
     selectorOptions = {
@@ -510,7 +510,7 @@ function appendDimension(dim, label, color, subproperty, concept){
     };
     _propertySelector = new ObjectSelector(conceptModel, _subjectURI, "http://purl.org/linked-data/cube#concept", selectorOptions);
     _propertySelector.presentInContainer();
-    
+
     $("input", input1).val(concept);
 }
 
@@ -519,10 +519,10 @@ function appendAttribute(dim, label, color, uri){
     var htmlText = '<tr style="background-color:' + color + '" about="'+dim+'"><td name="'+label+'">' + label;
         htmlText += '<br/><sub>attribute:</sub><span id="attr_'+eid+'_0"></span>';
         htmlText += '</td></tr>';
-    
+
     var tr = $(htmlText).data('dimension', label);
     $('#csvimport-attributes').append(tr);
-    
+
     // property selector
     var attributeURI = dim;
     _subjectURI = "http://"+window.location.host+"/ontowiki/somegraph";
@@ -538,7 +538,7 @@ function appendAttribute(dim, label, color, uri){
     // FIXME: title hack
     _propertySelector = new ObjectSelector(attributeModel, _subjectURI, "http://www.w3.org/2000/01/rdf-schema#subPropertyOf", selectorOptions);
     _propertySelector.presentInContainer();
-    
+
     $("input", input0).val(uri);
 }
 
