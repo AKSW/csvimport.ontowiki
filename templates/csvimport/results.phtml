@@ -23,7 +23,7 @@
             $("#import-options").css("height", "500px");
             var done = false;
             var updater = window.setInterval(function(){
-                $.get("extensions/components/csvimport/logs/importer.log", function(data){
+                $.get("extensions/csvimport/logs/importer.log", function(data){
                     $("#import-options").html(data.replace(/\n/g, "<br/>"));
                 });
                 if(done){

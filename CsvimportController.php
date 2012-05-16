@@ -28,12 +28,12 @@ class CsvimportController extends OntoWiki_Controller_Component
     }
 
     public function indexAction()
-    {        
+    {
         $this->_forward('upload');
     }
 
     public function uploadAction()
-    {        
+    {
         if (!isset($this->_request->upload)) {
             // clean store
             $this->_destroySessionStore();
@@ -146,7 +146,7 @@ class CsvimportController extends OntoWiki_Controller_Component
                     require_once('TabularImporter.php');
                     $importer = new TabularImporter($this->view,
                                                     $this->_privateConfig,
-                                                    array('headlineDetection' => $store->headlineDetection, 
+                                                    array('headlineDetection' => $store->headlineDetection,
                                                           'separator' => $store->csvSeparator)
                                                    );
 
@@ -210,7 +210,7 @@ class CsvimportController extends OntoWiki_Controller_Component
                                             'config' => $contents );
             }
             closedir($dh);
-            
+
             return $configurations;
         }
         return array();
@@ -221,7 +221,7 @@ class CsvimportController extends OntoWiki_Controller_Component
 
         $query = new Erfurt_Sparql_SimpleQuery();
         $query->setProloguePart(' SELECT  ?configUri ?configLabel ?configuration') ;
-        $query->setWherePart('  
+        $query->setWherePart('
                     WHERE { ?configUri a <' . $sysontUri . 'CSVImportConfig> .
                             ?configUri <http://www.w3.org/2000/01/rdf-schema#label> ?configLabel .
                             ?configUri <' . $sysontUri . 'CSVImportConfig/configuration> ?configuration} ');
@@ -231,7 +231,7 @@ class CsvimportController extends OntoWiki_Controller_Component
             $configurations = array();
             foreach ($result as $entry) {
                 //var_dump($entry['configuration']); die;
-                $configurations[$entry['configUri']] = array ( 
+                $configurations[$entry['configUri']] = array (
                                                         'label' => $entry['configLabel'],
                                                         'config' => base64_decode($entry['configuration']) );
             }
@@ -252,50 +252,11 @@ class CsvimportController extends OntoWiki_Controller_Component
             $val = $post['configString'];
             $name = str_replace(" ", "_", $post['configName']);
 
-            $fp = fopen('extensions/components/csvimport/configs/'.$name.'.cfg', 'w');
+            $dir = $this->_owApp->extensionManager->getExtensionPath('csvimport').'/configs/';
+
+            $fp = fopen($dir.$name.'.cfg', 'w');
             fwrite($fp, $val);
             fclose($fp);
-
-            return;
-
-            // needed vars
-            $sysontUri = $this->_owApp->erfurt->getConfig()->sysont->modelUri;
-            $sysOnt = $this->_owApp->erfurt->getStore()->getModel($sysontUri, false);
-            $class = $sysontUri.'CSVImportConfig';
-            $config = $class.'/configuration';
-            $type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
-            $label = 'http://www.w3.org/2000/01/rdf-schema#label';
-            $val = $post['configString'];
-            $name = $sysontUri . date('Y/m/d/H/i/s') . '/' . str_replace(' ', '_', $post['configName']);
-
-            // create config instance:
-            // name
-            // config string
-            // {sysont_ns}:salt/name a {sysont_ns}:CSVImportConfig
-            // {sysont_ns}:salt/name {sysont_ns}:CSVImportConfig/configuration "config string"
-            $element[$name] = array(
-                $type => array(
-                    array(
-                        'type' => 'uri',
-                        'value' => $class
-                    )
-                ),
-                $config => array(
-                    array(
-                        'type' => 'literal',
-                        'value' => base64_encode($val)
-                    )
-                ),
-                $label => array(
-                    array(
-                        'type' => 'literal',
-                        'value' => $post['configName']
-                    )
-                )
-            );
-
-            //var_dump($element);
-            $sysOnt->addMultipleStatements( $element );
         }
     }
 

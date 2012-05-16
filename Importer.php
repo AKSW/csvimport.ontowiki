@@ -66,8 +66,8 @@ abstract class Importer implements ImporterInterface
     }
 
     public static function initLog(){
-        $path = 'extensions/components/csvimport/';
-        if(!is_writable($path)) return -1;
+        $path = 'extensions/csvimport/';
+        //if(!is_writable($path)) return -1;
         if(!is_dir($path.'logs/')) {
             if(!mkdir($path.'logs/', 0777)){
                 echo "something was wrong while creating log at : " . $path;
@@ -80,8 +80,8 @@ abstract class Importer implements ImporterInterface
     }
 
     public static function logEvent($event){
-        $path = 'extensions/components/csvimport/';
-        if(!is_writable($path)) return -1;
+        $path = 'extensions/csvimport/';
+        //if(!is_writable($path)) return -1;
         if(!is_dir($path.'logs/')) {
             if(!mkdir($path.'logs/', 0777)){
                 echo "something was wrong while creating log at : " . $path;
