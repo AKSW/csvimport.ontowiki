@@ -11,7 +11,7 @@
 :csvimport a doap:Project ;
 
   doap:release :v1-0 ;
-  doap:description "" ;
+  doap:description "Convert data from CSV to RDF and load into a knowledge base." ;
   doap:name "CSVImport" ;
 
   owconfig:authorLabel "AKSW" ;
@@ -30,7 +30,102 @@
   owconfig:priority "30" ;
   owconfig:context "main.sidewindows" .
 
-:csvimport doap:release :v1-0 .
+:csvimport [
+  a owconfig:Config;
+  owconfig:id "class";
+  :subPropertyOf "http://www.w3.org/2000/01/rdf-schema#subPropertyOf";
+  :label  "http://www.w3.org/2000/01/rdf-schema#label";
+  :type "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+  :comment  "http://purl.org/dc/elements/1.1/comment";
+  :value  "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+] ;
+
+ owconfig:config [
+      a owconfig:Config;
+      owconfig:id "qb";
+      :DataSet  "http://purl.org/linked-data/cube#DataSet";
+      :DataStructureDefinition  "http://purl.org/linked-data/cube#DataStructureDefinition";
+      :DimensionProperty  "http://purl.org/linked-data/cube#DimensionProperty";
+      :MeasureProperty  "http://purl.org/linked-data/cube#MeasureProperty";
+      :Observation  "http://purl.org/linked-data/cube#Observation";
+      :attribute  "http://purl.org/linked-data/cube#attribute";
+      :component  "http://purl.org/linked-data/cube#component";
+      :componentAttachment  "http://purl.org/linked-data/cube#componentAttachment";
+      :concept  "http://purl.org/linked-data/cube#concept";
+      :dataset  "http://purl.org/linked-data/cube#dataset";
+      :dimension  "http://purl.org/linked-data/cube#dimension";
+      :measure  "http://purl.org/linked-data/cube#measure";
+      :order  "http://purl.org/linked-data/cube#order";
+      :structure  "http://purl.org/linked-data/cube#structure"
+] ;
+
+ owconfig:config [
+      a owconfig:Config;
+      owconfig:id "local";
+      :DataSet  "http://purl.org/linked-data/cube#DataSet";
+      :DataStructureDefinition  "http://purl.org/linked-data/cube#DataStructureDefinition";
+      :DimensionProperty  "http://purl.org/linked-data/cube#DimensionProperty";
+      :MeasureProperty  "http://purl.org/linked-data/cube#MeasureProperty";
+      :Observation  "http://purl.org/linked-data/cube#Observation";
+] ;
+
+ owconfig:Config;
+      owconfig:id "local";
+      owconfig:config [
+          a owconfig:Config;
+          owconfig:id "incidence";
+          owconfig:config [
+              a owconfig:Config;
+              owconfig:id "uri";
+              :uri <"http://example.com/incidence">
+        ] 
+];
+
+owconfig:Config;
+      owconfig:id "local";
+      owconfig:config [
+          a owconfig:Config;
+          owconfig:id "incidence";
+          owconfig:config [
+              a owconfig:Config;
+              owconfig:id "uri";
+              :uri <http://example.com/incidence>
+          ]
+];
+
+owconfig:Config;
+      owconfig:id "local";
+      owconfig:config [
+          a owconfig:Config;
+          owconfig:id "incidence";
+          owconfig:config [
+              a owconfig:Config;
+              owconfig:id "type";
+              :type <http://purl.org/linked-data/cube#MeasureProperty> ;
+              :label "incidence"
+          ]
+];
+
+owconfig:Config;
+      owconfig:id "local";
+      owconfig:config [
+          a owconfig:Config;
+          owconfig:id "incidence";
+          owconfig:config [
+              a owconfig:Config;
+              owconfig:id "subpropertyof";
+              :subpropertyof <http://purl.org/linked-data/sdmx/2009/measure#ObsValue> ;
+              :label "incidence"
+          ]
+];
+
+a owconfig:Config;
+      owconfig:id "local";
+      :base <http://example.com/item> ;
+      :setBase <http://example.com/dataset>
+] ;
+
+doap:release :v1-0 .
 
 :v1-0 a doap:Version ;
   doap:revision "1.0" .
