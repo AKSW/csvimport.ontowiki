@@ -16,6 +16,7 @@
   owconfig:hasModule :Default ;
   owconfig:privateNamespace <https://github.com/AKSW/csvimport/raw/master/doap.n3#> ;
   owconfig:templates "templates" ;
+  owconfig:pluginEvent event:onCreateMenu ;
   rdfs:label "CSVImport".
   :Default a owconfig:Module ;
   rdfs:label "Default" ;

@@ -20,29 +20,5 @@ class CsvimportHelper extends OntoWiki_Component_Helper
 {
     public function init()
     {
-        // TODO: register menu entry
-        $menuRegistry = '';
-
-        //Adding MenuEntries on the basis of the private plugin configuration
-        $appMenu    = OntoWiki_Menu_Registry::getInstance()->getMenu('application');
-        $extrasMenu = $appMenu->getSubMenu('Extras');                    
-        #$extrasMenu->appendEntry( 
-        #            $this->_owApp->translate->_('Import CSV Data', $this->_owApp->config->languages->locale),
-        #            new OntoWiki_Url(array('controller' => 'csvimport'), array() )
-        #);
-
-
-
-
-
-    }
-    
-    public function onCreateMenu($event)
-    {
-        if ($event->isModel) {
-            $url = new OntoWiki_Url(array('controller' => 'csvimport'), array());
-            $menu = $event->menu;
-            $menu->appendEntry('Import CSV Data', (string) $url);
-        }
     }
 }

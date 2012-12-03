@@ -40,7 +40,7 @@ class CsvimportController extends OntoWiki_Controller_Component
 
             // TODO: show import dialogue and import file
             $this->view->placeholder('main.window.title')->append('Import CSV Data');
-            OntoWiki_Navigation::disableNavigation();
+            //OntoWiki_Navigation::disableNavigation();
 
             $this->view->formActionUrl = $this->_config->urlBase . 'csvimport';
             $this->view->formEncoding  = 'multipart/form-data';
