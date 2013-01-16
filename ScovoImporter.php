@@ -306,7 +306,7 @@ class ScovoImporter extends Importer
         $component = $this->componentConfig->qb->component;
         
         // set url base
-        $url_base = $this->componentConfig->local->setBase . "/".hash("md5", serialize($this->parsedFile))."/DataStructure";
+        $url_base = $dimensions['urlbase']."DataStructure";
         
         // create datastructure definition
         $element[$url_base] = array(
@@ -361,7 +361,7 @@ class ScovoImporter extends Importer
         // objects
         $qbObservation = $this->componentConfig->qb->Observation;
         // item url base
-        $url_base = $this->componentConfig->local->base . "/".hash("md5", serialize($this->parsedFile));
+        $url_base = $dimensions['uribase'];
         // count
         $count = 0;
 
@@ -409,7 +409,7 @@ class ScovoImporter extends Importer
                         $element = array();
                         
                         // create item url
-                        $eurl = $url_base."/c".$colIndex."-r".$rowIndex;
+                        $eurl = $url_base."c".$colIndex."-r".$rowIndex;
                         
                         // get attributes
                         $attributes = array();
@@ -423,14 +423,26 @@ class ScovoImporter extends Importer
                         }
                         
                         // merge with dimensions
+						
+						//determine which datatype and set the incidence 
+						$aBuf = array();
+						if((preg_match('/[^0-9]/', $cell) <= 0)) {
+							$aBuf['type'] = 'integer';
+							$aBuf['value'] = intval($cell);
+						} else {
+							$aBuf['type'] = 'literal';
+							$aBuf['value'] = floatval($cell);
+						}
+			
                         $element[$eurl] = array_merge(
                             $itemDims,
                             array(
                                 $incidence => array(
-                                    array(
-                                        'type' => 'literal',
+             /*                       array(
+                                        'type' => 'literal', //TODO: add check for float and if true take corresponding type 
                                         'value' => floatval( $cell )
-                                    )
+                                    ),*/
+									$aBuf
                                 ),
                                 $type => array(
                                     array(
