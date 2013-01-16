@@ -421,9 +421,9 @@ $(document).ready(function () {
 
             dimensions.uribase = uribase;
         }
-
+		console.log(dimensions);
         dimensionString = $.toJSON(dimensions);
-
+		
         var url = window.location.href + '/results';
         $.get(url, function(data){
             var div_str = '<div id="import-options" \

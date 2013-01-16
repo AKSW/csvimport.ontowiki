@@ -131,9 +131,11 @@ class ScovoImporter extends Importer
         $qbconcept = $this->componentConfig->qb->concept;
         
         foreach ($this->configuration as $url => $dim) {
-            // filter blank stuff
-            if(strlen($dim['label']) < 1) continue;
-            
+			
+            // filter blank stuff and 
+			// and also the 'uribase' case
+            if((strlen($dim['label']) < 1) || ($url == "uribase")) continue;
+			
             // if it's attribute
             if( isset($dim['attribute']) && $dim['attribute'] == true){                
                 // save measure
@@ -255,10 +257,9 @@ class ScovoImporter extends Importer
                 );
                 $elements[] = $element;
             }
-
         }
         
-        // create incidence
+       // create incidence
         $element = array();
         $element[$this->componentConfig->local->incidence->uri] = array(
             $type => array(
@@ -320,7 +321,9 @@ class ScovoImporter extends Importer
         // append 
         $values = array();
         foreach($dimensions as $url => $dim){
-            $values[] = array(
+		    //the same "uribase" case as in the dimensions, ignore it 
+            if($url == "uribase") continue;
+			$values[] = array(
                 'type' => 'uri',
                 'value' => $url
             );
