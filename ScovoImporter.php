@@ -426,14 +426,18 @@ class ScovoImporter extends Importer
 						
 						//determine which datatype and set the incidence 
 						$aBuf = array();
-						if((preg_match('/[^0-9]/', $cell) <= 0)) {
-							$aBuf['type'] = 'integer';
+						if((preg_match('/[^0-9]/', $cell) <= 0)) { //integer case 
+							$aBuf['type'] = 'literal';
 							$aBuf['value'] = intval($cell);
-						} else {
+							$aBuf['datatype'] = 'http://www.w3.org/2001/XMLSchema#integer';
+						} else if((preg_match('/[^0-9.]/', $cell) <= 0)) {  //float casse
 							$aBuf['type'] = 'literal';
 							$aBuf['value'] = floatval($cell);
+							$aBuf['datatype'] = 'http://www.w3.org/2001/XMLSchema#float';
+						} else {//everything else is a string 
+							$aBuf['type'] = 'literal';
+							$aBuf['value'] = $cell;
 						}
-			
                         $element[$eurl] = array_merge(
                             $itemDims,
                             array(
