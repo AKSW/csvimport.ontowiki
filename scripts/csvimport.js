@@ -229,7 +229,7 @@ $(document).ready(function () {
         var name = prompt('Dimension name:');
         if ( typeof name == 'undefined' || name.length < 1) return;
 
-        var eid = name.replace(" ","_");
+        var eid = name.replace(/ /g,'_');
         var dimensionInfo = {
             color: _getColor(),
             label: $.trim(name),
@@ -321,7 +321,7 @@ $(document).ready(function () {
         var name = prompt('Attribute name:');
         if ( typeof name == 'undefined' || name.length < 1) return;
 
-        var eid = name.replace(" ","_");
+        var eid = name.replace(/ /g,'_');
         var attributeInfo = {
             color: _getColor(),
             label: $.trim(name),
@@ -395,6 +395,18 @@ $(document).ready(function () {
      */
     $('#extract').click(function () {
         if( typeof(decodedConfig) == 'undefined' || decodedConfig === false ){
+		    //create the measure propery if the edit field is not empty 
+			if($.trim($("#measure").val()).length > 0) {
+				var measureProperty = {
+					uri : _getURI($.trim($("#measure").val()).replace(/ /g,'_')),
+					label : $.trim($("#measure").val())
+				}
+				dimensions['measure'] = measureProperty;
+				}
+			else {
+				alert('Please enter a valid measure name.');
+				return false;
+			}
             if ($.isEmptyObject(dimensions)) {
                 alert('Please select at least one dimension.');
                 return false;
@@ -418,7 +430,7 @@ $(document).ready(function () {
                     }
                 }
             }
-
+			//console.log(dimensions);
             dimensions.uribase = uribase;
         }
 		console.log(dimensions);

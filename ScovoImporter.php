@@ -306,7 +306,7 @@ class ScovoImporter extends Importer
         $component = $this->componentConfig->qb->component;
         
         // set url base
-        $url_base = $dimensions['urlbase']."DataStructure";
+        $url_base = $dimensions['uribase']."DataStructure";
         
         // create datastructure definition
         $element[$url_base] = array(

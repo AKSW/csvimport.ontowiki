@@ -30,6 +30,7 @@
                     window.clearInterval(updater);
                 };
             }, 5000);
+			console.log(dimensionString);
             $.post(actionURL, {dimensions: dimensionString}, function () {
                 //alert('Success');
                 done = true;
