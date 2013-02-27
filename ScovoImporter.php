@@ -33,9 +33,9 @@ class ScovoImporter extends Importer
     public function importData() {
         $this->logEvent("Import started..");
 
-        $this->_createDimensions();
-        $this->_createDataset();
-        $this->_saveData();
+       $this->_createDimensions();
+       $this->_createDataset();
+       $this->_saveData();
 
         $this->logEvent("Done saving data!");
     }
@@ -111,7 +111,7 @@ class ScovoImporter extends Importer
     }
 
     protected function _createDimensions() {
-        $this->logEvent("Creating dimensions..");
+        $this->logEvent("Creating component properties and dataset...");
         
         $ontowiki = OntoWiki::getInstance();
         
@@ -127,33 +127,43 @@ class ScovoImporter extends Importer
         $comment = $this->componentConfig->class->comment;
         
         // qb vars
+		$qbDimension = $this->componentConfig->qb->dimension;
         $qbDimensionProperty = $this->componentConfig->qb->DimensionProperty;
         $qbconcept = $this->componentConfig->qb->concept;
-        
-        foreach ($this->configuration as $url => $dim) {
-			
+		$qbAttribute = $this->componentConfig->qb->attribute;
+		$qbAttributeProperty = $this->componentConfig->qb->AttributeProperty;
+		$qbMeasure = $this->componentConfig->qb->measure;
+		$qbMeasureProperty = $this->componentConfig->qb->MeasureProperty; 
+		$qbComponentProperty = $this->componentConfig->qb->componentProperty;
+		$qbComponentSpecification = $this->componentConfig->qb->ComponentSpecification;
+		$qbDataSet = $this->componentConfig->qb->DataSet;
+		
+        foreach ($this->configuration as $url => $dim) {		
+			//temporary element object 
+			$element = array();
             // filter blank stuff and 
-			// and also the 'uribase' case
-            if((strlen($dim['label']) < 1) || ($url == "uribase")) continue;
-			
-            // if it's attribute
-            if( isset($dim['attribute']) && $dim['attribute'] == true){                
+			// and also the 'uribase','dataset' case
+            if((strlen($dim['label']) < 1) || ($url == "uribase"))
+				continue;
+            // if it's an attribute
+            else if( isset($dim['attribute']) && $dim['attribute'] == true) {                
                 // save measure
                 $this->measures[] = array(
                     'url' => $url,
-                    'uri' => $dim['uri'],
+                    //'uri' => $dim['uri'],
+					'uri' => $qbAttribute,
                     'label' => $dim['label'],
                     'value' => $dim['value']
                 );
                 
-                // empty array
-                $element = array();
                 // class
                 $element[$url] = array(
                     $type => array(
                         array(
                             'type' => 'uri',
-                            'value' => $dim['uri']
+							//why is this Attribute type decided by the user, isn't it always a qb:AttributeProperty?
+                            //'value' => $dim['uri']
+							'value' => $qbAttributeProperty
                             )
                         ),
                     $label => array(
@@ -169,97 +179,190 @@ class ScovoImporter extends Importer
                         )
                     )
                 );
-                
-                //$ontowiki->selectedModel->addMultipleStatements($element);
-                $elements[] = $element;
-                continue;
-            }
-
-            $element = array();
-
-            // class
-            $element[$url] = array(
-                $type => array(
-                    array(
-                        'type' => 'uri',
-                        'value' => $qbDimensionProperty
-                        )
-                    ),
-                $label => array(
-                    array(
-                        'type' => 'literal',
-                        'value' => $dim['label']
-                        )
-                    )
-            );
-            
-            if( preg_match('/\D/', $dim['label']) <= 0  ){
-                $element[$url] = array_merge($element[$url],
-                    array(
-                        $value_predicate => array(
-                            array(
-                                'type' => 'integer',
-                                'value' => intval($dim['label'])
-                            )
-                        )
-                    )
-                );
-            }
-            
-            // set subPropertyOf
-            if( isset($dim['subproperty']) ){
-                $element[$url] = array_merge($element[$url], 
-                    array(
-                        $subPropertyOf => array(
-                            array(
-                                'type' => 'uri',
-                                'value' => $dim['subproperty']
-                            )
-                        )
-                    )
-                );
-            }
-            
-            // set concept
-            if( isset($dim['concept']) ){
-                $element[$url] = array_merge($element[$url], 
-                    array(
-                        $qbconcept => array(
-                            array(
-                                'type' => 'uri',
-                                'value' => $dim['concept']
-                            )
-                        )
-                    )
-                );
-            }
-            
-            $elements[] = $element;
-
-            // types
-            foreach ($dim['elements'] as $eurl => $elem) {
-                $element = array();
-
-                // type of new dimension
-                $element[$eurl] = array(
+				$element[$url."_CS"] = array (
+					$type => array(
+						array(
+							'type' => 'uri',
+							'value' => $qbComponentSpecification
+							)
+						),
+					$qbAttribute => array(
+						array(
+							'type' => 'uri',
+							'value' => $url
+							)
+						),
+					$label => array (
+						array(
+							'type' => 'literal',
+							'value' => $dim['label']."_CS"
+							)
+						)
+				);
+				$elements[] = $element;
+			} 
+			// if it's a measure
+			else if($url == "measure") {
+                $element[$dim['uri']] = array(
                     $type => array(
                         array(
                             'type' => 'uri',
-                            'value' => $url
+							'value' => $qbMeasureProperty
                             )
                         ),
                     $label => array(
                         array(
                             'type' => 'literal',
-                            'value' => $elem['label']
+                            'value' => $dim['label']
                             )
                         )
                 );
-                $elements[] = $element;
-            }
-        }
+				$element[$dim['uri']."_CS"] = array (
+					$type => array(
+						array(
+							'type' => 'uri',
+							'value' => $qbComponentSpecification
+							)
+						),
+					$qbMeasure => array(
+						array(
+							'type' => 'uri',
+							'value' => $dim['uri']
+							)
+						),
+					$label => array (
+						array(
+							'type' => 'literal',
+							'value' => $dim['label']."_CS"
+							)
+						)
+				);
+				$elements[] = $element;
+			}   
+			// if it's a dataset
+			else if($url == "dataset") {
+                $element[$dim['uri']] = array(
+                    $type => array(
+                        array(
+                            'type' => 'uri',
+							'value' => $qbDataSet
+                            )
+                        ),
+                    $label => array(
+                        array(
+                            'type' => 'literal',
+                            'value' => $dim['label']
+                            )
+                        )
+                 );
+				$elements[] = $element;
+			}
+			// the component case 
+			else {
+				// component and its component specification
+				$element[$url] = array(
+					$type => array(
+						array(
+							'type' => 'uri',
+							'value' => $qbDimensionProperty
+							)
+						),
+					$label => array(
+						array(
+							'type' => 'literal',
+							'value' => $dim['label']
+							)
+						)
+				);
+				if( preg_match('/\D/', $dim['label']) <= 0  ){
+					$element[$url] = array_merge($element[$url],
+						array(
+							$value_predicate => array(
+								array(
+									'type' => 'integer',
+									'value' => intval($dim['label'])
+								)
+							)
+						)
+					);
+				}
+				$element[$url."_CS"] = array (
+					$type => array(
+						array(
+							'type' => 'uri',
+							'value' => $qbComponentSpecification
+							)
+						),
+					$qbDimension => array(
+						array(
+							'type' => 'uri',
+							'value' => $url
+							)
+						),
+					$label => array (
+						array(
+							'type' => 'literal',
+							'value' => $dim['label']."_CS"
+							)
+						)
+				);
+				
+				// set subPropertyOf
+				if( isset($dim['subproperty']) ){
+					$element[$url] = array_merge($element[$url], 
+						array(
+							$subPropertyOf => array(
+								array(
+									'type' => 'uri',
+									'value' => $dim['subproperty']
+								)
+							)
+						)
+					);
+				}
+				
+				// set concept
+				if( isset($dim['concept']) ){
+					$element[$url] = array_merge($element[$url], 
+						array(
+							$qbcomponentProperty => array(
+								array(
+									'type' => 'uri',
+									'value' => $dim['concept']
+								)
+							)
+						)
+					);
+				}
+				
+				$elements[] = $element;
+
+				// types
+				foreach ($dim['elements'] as $eurl => $elem) {
+					$element = array();
+
+					// type of new dimension
+					$element[$eurl] = array(
+						$type => array(
+							array(
+								'type' => 'uri',
+								'value' => $url
+								)
+							),
+						$label => array(
+							array(
+								'type' => 'literal',
+								'value' => $elem['label']
+								)
+							)
+					);
+					$elements[] = $element;
+				}
+			}
+			
+	}
         
-       // create incidence
+    /*  // create incidence
         $element = array();
         $element[$this->componentConfig->local->incidence->uri] = array(
             $type => array(
@@ -280,12 +383,12 @@ class ScovoImporter extends Importer
                     'value' => $this->componentConfig->local->incidence->subpropertyof
                 )
             )
-        );
-        $elements[] = $element;
+        ); 
+        $elements[] = $element; */ 
         
         foreach ($elements as $elem) {
-            //print_r($elem);
-            $ontowiki->selectedModel->addMultipleStatements($elem);
+           //DEBUG: print_r($elem);
+           $ontowiki->selectedModel->addMultipleStatements($elem);
         }
 
         $this->logEvent("All dimensions created!");
@@ -304,6 +407,7 @@ class ScovoImporter extends Importer
         // predicates
         $type = $this->componentConfig->class->type;
         $component = $this->componentConfig->qb->component;
+		$structure = $this->componentConfig->qb->structure;
         
         // set url base
         $url_base = $dimensions['uribase']."DataStructure";
@@ -320,13 +424,23 @@ class ScovoImporter extends Importer
         
         // append 
         $values = array();
+		$valueDataSet = array(); 
         foreach($dimensions as $url => $dim){
 		    //the same "uribase" case as in the dimensions, ignore it 
-            if($url == "uribase") continue;
-			$values[] = array(
-                'type' => 'uri',
-                'value' => $url
-            );
+            if($url == "uribase") 
+				continue;
+			else if($url == "dataset") {
+				$valueDataSet[] = array(
+					'type' => 'uri',
+					'value' => $dim['uri']
+				);
+			}
+			else {
+				$values[] = array(
+					'type' => 'uri',
+					'value' => $url == "measure" ? $dim['uri']."_CS" : $url."_CS" //CS for ComponentSpecification
+				);
+			}
         }
         
         // merge values
@@ -337,11 +451,18 @@ class ScovoImporter extends Importer
                 )
             );
         }
+		// merge DataStructure 
+		$element[$url_base] = array_merge($element[$url_base],
+			array(
+				$structure => $valueDataSet
+			)
+		);
         
         // TODO: Add qb:attribute from sdmx-attribute: data set
         
         // save to store
         $ontowiki = OntoWiki::getInstance();
+		//DEBUG: print_r($element);
         $ontowiki->selectedModel->addMultipleStatements($element);
     }
 
@@ -357,7 +478,8 @@ class ScovoImporter extends Importer
         // predicates
         $type = $this->componentConfig->class->type;
         $dataset = $this->componentConfig->qb->dataset;
-        $incidence = $this->componentConfig->local->incidence->uri;
+		//$incidence = $this->componentConfig->local->incidence->uri;
+		
         // objects
         $qbObservation = $this->componentConfig->qb->Observation;
         // item url base
@@ -434,18 +556,14 @@ class ScovoImporter extends Importer
 							$aBuf['type'] = 'literal';
 							$aBuf['value'] = floatval($cell);
 							$aBuf['datatype'] = 'http://www.w3.org/2001/XMLSchema#float';
-						} else {//everything else is a string 
+						} else {//everything else is a literal
 							$aBuf['type'] = 'literal';
 							$aBuf['value'] = $cell;
 						}
                         $element[$eurl] = array_merge(
                             $itemDims,
-                            array(
-                                $incidence => array(
-             /*                       array(
-                                        'type' => 'literal', //TODO: add check for float and if true take corresponding type 
-                                        'value' => floatval( $cell )
-                                    ),*/
+                            array( //its a measure 
+                                $dimensions["measure"]["uri"] => array(
 									$aBuf
                                 ),
                                 $type => array(
@@ -458,6 +576,17 @@ class ScovoImporter extends Importer
                         );
                         // merge with attributes
                         $element[$eurl] = array_merge($element[$eurl],$attributes);
+						
+						//link to the dataset 
+						$element[$eurl] = array_merge($element[$eurl],array (
+							$dataset => array (
+								array(
+									'type' => 'uri',
+									'value' => $dimensions["dataset"]["uri"]
+									)
+								)
+							)
+						);
                         
                         
 
