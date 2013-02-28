@@ -395,7 +395,18 @@ $(document).ready(function () {
      */
     $('#extract').click(function () {
         if( typeof(decodedConfig) == 'undefined' || decodedConfig === false ){
-		    //create the dataset propery if the edit field is not empty 
+			 //create the dataset structure definition if the edit field is not empty 
+			if($.trim($("#datastructure").val()).length > 0) {
+				var measureProperty = {
+					uri : _getURI($.trim($("#datastructure").val()).replace(/ /g,'_')),
+					label : $.trim($("#datastructure").val())
+				}
+				dimensions['datastructure'] = measureProperty;
+			} else {
+				alert('Please enter a valid datastructure name.');
+				return false;
+			}
+			//create the dataset propery if the edit field is not empty 
 			if($.trim($("#dataset").val()).length > 0) {
 				var measureProperty = {
 					uri : _getURI($.trim($("#dataset").val()).replace(/ /g,'_')),
@@ -403,7 +414,7 @@ $(document).ready(function () {
 				}
 				dimensions['dataset'] = measureProperty;
 			} else {
-				alert('Please enter a valid datastructure name.');
+				alert('Please enter a valid dataset name.');
 				return false;
 			}	
 		    //create the measure propery if the edit field is not empty 

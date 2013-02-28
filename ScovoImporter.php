@@ -35,7 +35,7 @@ class ScovoImporter extends Importer
 
        $this->_createDimensions();
        $this->_createDataset();
-       $this->_saveData();
+       //$this->_saveData();
 
         $this->logEvent("Done saving data!");
     }
@@ -137,13 +137,14 @@ class ScovoImporter extends Importer
 		$qbComponentProperty = $this->componentConfig->qb->componentProperty;
 		$qbComponentSpecification = $this->componentConfig->qb->ComponentSpecification;
 		$qbDataSet = $this->componentConfig->qb->DataSet;
+		$structure = $this->componentConfig->qb->structure;
 		
         foreach ($this->configuration as $url => $dim) {		
 			//temporary element object 
 			$element = array();
             // filter blank stuff and 
 			// and also the 'uribase','dataset' case
-            if((strlen($dim['label']) < 1) || ($url == "uribase"))
+            if((strlen($dim['label']) < 1) || ($url == "uribase") || ($url == "datastructure") )
 				continue;
             // if it's an attribute
             else if( isset($dim['attribute']) && $dim['attribute'] == true) {                
@@ -253,8 +254,14 @@ class ScovoImporter extends Importer
                             'type' => 'literal',
                             'value' => $dim['label']
                             )
-                        )
-                 );
+                        ),
+					$structure => array( 
+					    array(
+						    'type' => 'uri',
+							'value' => $this->configuration["datastructure"]["uri"]
+						)
+					)
+				);
 				$elements[] = $element;
 			}
 			// the component case 
@@ -387,8 +394,9 @@ class ScovoImporter extends Importer
         $elements[] = $element; */ 
         
         foreach ($elements as $elem) {
-           //DEBUG: print_r($elem);
-           $ontowiki->selectedModel->addMultipleStatements($elem);
+           //DEBUG: 
+		   print_r($elem);
+           //$ontowiki->selectedModel->addMultipleStatements($elem);
         }
 
         $this->logEvent("All dimensions created!");
@@ -407,10 +415,9 @@ class ScovoImporter extends Importer
         // predicates
         $type = $this->componentConfig->class->type;
         $component = $this->componentConfig->qb->component;
-		$structure = $this->componentConfig->qb->structure;
         
         // set url base
-        $url_base = $dimensions['uribase']."DataStructure";
+        $url_base = $dimensions['datastructure']['uri'];
         
         // create datastructure definition
         $element[$url_base] = array(
@@ -424,17 +431,11 @@ class ScovoImporter extends Importer
         
         // append 
         $values = array();
-		$valueDataSet = array(); 
+		
         foreach($dimensions as $url => $dim){
 		    //the same "uribase" case as in the dimensions, ignore it 
-            if($url == "uribase") 
+            if($url == "uribase" || $url == "datastructure" || $url == "dataset") 
 				continue;
-			else if($url == "dataset") {
-				$valueDataSet[] = array(
-					'type' => 'uri',
-					'value' => $dim['uri']
-				);
-			}
 			else {
 				$values[] = array(
 					'type' => 'uri',
@@ -451,19 +452,14 @@ class ScovoImporter extends Importer
                 )
             );
         }
-		// merge DataStructure 
-		$element[$url_base] = array_merge($element[$url_base],
-			array(
-				$structure => $valueDataSet
-			)
-		);
         
         // TODO: Add qb:attribute from sdmx-attribute: data set
         
         // save to store
         $ontowiki = OntoWiki::getInstance();
-		//DEBUG: print_r($element);
-        $ontowiki->selectedModel->addMultipleStatements($element);
+		//DEBUG: 
+		print_r($element);
+        //$ontowiki->selectedModel->addMultipleStatements($element);
     }
 
 
