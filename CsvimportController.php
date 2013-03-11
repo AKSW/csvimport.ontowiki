@@ -191,6 +191,21 @@ class CsvimportController extends OntoWiki_Controller_Component
         OntoWiki_Navigation::disableNavigation();
     }
 
+    protected function importlogAction()
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        $config = $this->_owApp->getConfig();
+        $path = $config->log->path;
+        $contents = "";
+        $filename = $path.'importer.log';
+        $fp = fopen($filename, 'r');
+        $contents = fread($fp, filesize($filename));
+        fclose($fp);        
+        echo $contents;
+    }
+
 
     protected function getStoredConfigurationUris() {
         $dir = $this->_owApp->extensionManager->getExtensionPath('csvimport').'/configs/';

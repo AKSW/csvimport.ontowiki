@@ -35,7 +35,7 @@ class ScovoImporter extends Importer
 
        $this->_createDimensions();
        $this->_createDataset();
-       //$this->_saveData();
+       $this->_saveData();
 
         $this->logEvent("Done saving data!");
     }
@@ -395,8 +395,8 @@ class ScovoImporter extends Importer
         
         foreach ($elements as $elem) {
            //DEBUG: 
-		   print_r($elem);
-           //$ontowiki->selectedModel->addMultipleStatements($elem);
+		   //print_r($elem);
+           $ontowiki->selectedModel->addMultipleStatements($elem);
         }
 
         $this->logEvent("All dimensions created!");
@@ -458,8 +458,8 @@ class ScovoImporter extends Importer
         // save to store
         $ontowiki = OntoWiki::getInstance();
 		//DEBUG: 
-		print_r($element);
-        //$ontowiki->selectedModel->addMultipleStatements($element);
+		//print_r($element);
+        $ontowiki->selectedModel->addMultipleStatements($element);
     }
 
 
