@@ -41,7 +41,7 @@
     :componentProperty  "http://purl.org/linked-data/cube#componentProperty";
     :ComponentSpecification "http://purl.org/linked-data/cube#ComponentSpecification";
     :concept  "http://purl.org/linked-data/cube#concept";
-    :dataset  "http://purl.org/linked-data/cube#dataset";
+    :dataset  "http://purl.org/linked-data/cube#dataSet";
     :dimension  "http://purl.org/linked-data/cube#dimension";
     :measure  "http://purl.org/linked-data/cube#measure";
     :order  "http://purl.org/linked-data/cube#order";
