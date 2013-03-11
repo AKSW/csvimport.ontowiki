@@ -66,29 +66,31 @@ abstract class Importer implements ImporterInterface
     }
 
     public static function initLog(){
-        $path = 'extensions/csvimport/';
+        //$path = 'extensions/csvimport/logs/';
+        $path = 'logs/';
         //if(!is_writable($path)) return -1;
-        if(!is_dir($path.'logs/')) {
-            if(!mkdir($path.'logs/', 0777)){
+        if(!is_dir($path)) {
+            if(!mkdir($path, 0777)){
                 echo "something was wrong while creating log at : " . $path;
                 return 0;
             }
         }
-        $fp = fopen($path.'logs/importer.log', 'w+');
+        $fp = fopen($path.'importer.log', 'w+');
         fwrite($fp, "");
         fclose($fp);
     }
 
     public static function logEvent($event){
-        $path = 'extensions/csvimport/';
+        //$path = 'extensions/csvimport/';
+        $path = 'logs/';
         //if(!is_writable($path)) return -1;
-        if(!is_dir($path.'logs/')) {
-            if(!mkdir($path.'logs/', 0777)){
+        if(!is_dir($path)) {
+            if(!mkdir($path, 0777)){
                 echo "something was wrong while creating log at : " . $path;
                 return 0;
             }
         }
-        $fp = fopen($path.'logs/importer.log', 'a+');
+        $fp = fopen($path.'importer.log', 'a+');
         fwrite($fp, $event."\n");
         fclose($fp);
     }

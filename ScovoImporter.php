@@ -49,7 +49,7 @@ class ScovoImporter extends Importer
         $this->view->placeholder('main.window.title')->append('Import CSV Data');
         $this->view->actionUrl = $urlBase . 'csvimport/mapping';
         $this->view->salt = hash("md5", serialize($this->parsedFile));
-        OntoWiki_Navigation::disableNavigation();
+        $ontowiki->getNavigation()->disableNavigation();
 
         if ($model->isEditable()) {
 
