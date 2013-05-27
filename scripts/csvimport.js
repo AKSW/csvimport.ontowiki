@@ -51,26 +51,39 @@ $(document).ready(function () {
     $("#uribase").keyup(function(){
         if( $(this).val().length < 3 ) return;
         var oldbase = uribase;
-        uribase = $(this).val();
+        uribase = checkSlash($(this).val());
 
         // temp vars for new keys
         var newKey = '';
         var newEKey = '';
 
         for (d in dimensions) {
-            newKey = checkSlash( d.replace(oldbase, uribase) );
-            dimensions[newKey] = dimensions[d];
-
-            for(e in dimensions[d]["elements"]){
-                newEKey = checkSlash( e.replace(oldbase, uribase) );
-                dimensions[newKey]["elements"][newEKey] = dimensions[d]["elements"][e];
+	    if(dimensions[d]["uri"]){
+		// dataset, datastructure, measure
+		var e = dimensions[d]["uri"];
+		newEKey = checkSlash( e.replace(oldbase, uribase) );
+                dimensions[d]["uri"][newEKey] = dimensions[d]["uri"][e];
 
                 // delete old elements
-                delete dimensions[d]["elements"][e];
-            }
+                delete dimensions[d]["uri"][e];
+	    }else if(dimensions[d]["elements"]){
+		// dimension
+		newKey = checkSlash( d.replace(oldbase, uribase) );
+		dimensions[newKey] = dimensions[d];
 
-            // delete old stuff
-            delete dimensions[d];
+		for(e in dimensions[d]["elements"]){
+                    newEKey = checkSlash( e.replace(oldbase, uribase) );
+                    dimensions[newKey]["elements"][newEKey] = dimensions[d]["elements"][e];
+
+                    // delete old elements
+                    delete dimensions[d]["elements"][e];
+		}
+
+		// delete old stuff
+		delete dimensions[d];
+	    }else{
+		// do nothing
+	    }
         }
 
         dimensions.uribase = uribase;
