@@ -16,7 +16,7 @@ require_once("Importer.php");
  * @copyright Copyright (c) 2010, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
-class ScovoImporter extends Importer
+class DataCubeImporter extends Importer
 {
     protected $measure;
 

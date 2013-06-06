@@ -157,8 +157,8 @@ class CsvimportController extends OntoWiki_Controller_Component
                     }
                 break;
                 case "scovo" :
-                    require_once('ScovoImporter.php');
-                    $importer = new ScovoImporter($this->view, $this->_privateConfig);
+                    require_once('DataCubeImporter.php');
+                    $importer = new DataCubeImporter($this->view, $this->_privateConfig);
                     if (!empty($this->_request->dimensions)) {
                         $json = $this->_request->dimensions;
                         $json = str_replace('\\"', '"', $json);
