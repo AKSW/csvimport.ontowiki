@@ -151,7 +151,8 @@ class TabularImporter extends Importer
         $this->view->actionUrl = $urlBase . 'csvimport/mapping';
         $this->view->salt = hash("md5", serialize($this->parsedFile));
         $this->view->modelUri = (string)$model;
-        OntoWiki_Navigation::disableNavigation();
+        $nav = $ontowiki->getNavigation();
+        $nav->disableNavigation();
 
         $toolbar = $ontowiki->toolbar;
         $toolbar->appendButton(OntoWiki_Toolbar::SUBMIT, array('name' => 'Extract Triples', 'id' => 'extract'))
@@ -163,9 +164,6 @@ class TabularImporter extends Importer
         foreach ($headers as $element) {
             $data[] = array($element);
         }
-
-
-
 
         $this->view->table = $this->view->partial('importer/tabular.phtml', array(
                     'data' => $data,
