@@ -25,6 +25,9 @@ class CsvimportController extends OntoWiki_Controller_Component
 
         $this->view->headScript()->appendFile($this->_componentUrlBase . 'scripts/csvimport.js');
         $this->view->headScript()->appendFile($this->_componentUrlBase . 'scripts/rdfa.object.js');
+
+        // remove navigation tab
+        OntoWiki::getInstance()->getNavigation()->disableNavigation();
     }
 
     public function indexAction()
