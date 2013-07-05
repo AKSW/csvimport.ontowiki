@@ -15,7 +15,7 @@
   owconfig:enabled "true"^^xsd:boolean ;
   owconfig:privateNamespace <https://github.com/AKSW/csvimport/raw/master/doap.n3#> ;
   owconfig:templates "templates" ;
-  owconfig:pluginEvent event:onCreateMenu ;
+  owconfig:pluginEvent event:onCreateMenu , event:onProvideImportActions ;
   rdfs:label "CSVImport";
 
   owconfig:config [

@@ -40,4 +40,22 @@ class CsvimportPlugin extends OntoWiki_Plugin
 
         return true;
     }
+
+    /*
+     * add another import action
+     */
+    public function onProvideImportActions($event)
+    {
+        $myImportActions = array(
+            'csvimport-upload' => array(
+                'controller' => 'csvimport',
+                'action' => 'upload',
+                'label' => 'Upload a CSV file with statistical or tabular data.',
+                'description' => 'Tabular data import uses property mapping and Statistical data import uses DataCube mapping.'
+            )
+        );
+
+        $event->importActions = array_merge($event->importActions, $myImportActions);
+        return $event;
+    }
 }
