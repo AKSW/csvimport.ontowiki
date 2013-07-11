@@ -1,0 +1,16 @@
+Source: ontowiki-csvimport
+Section: web
+Priority: extra
+Maintainer: Sebastian Tramp <tramp@informatik.uni-leipzig.de>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.9.3
+Homepage: https://github.com/AKSW/csvimport.ontowiki/
+Vcs-Git: git://github.com/AKSW/csvimport.ontowiki.git
+Vcs-Browser: https://github.com/AKSW/csvimport.ontowiki/
+
+Package: ontowiki-csvimport
+Architecture: all
+Depends: ontowiki, ${misc:Depends}
+Description: CSV import and transformation extension for OntoWiki
+ csvimport is part of the LOD2 Stack.
+

@@ -1,0 +1,15 @@
+assets                   usr/share/ontowiki-csvimport
+CsvimportController.php  usr/share/ontowiki-csvimport
+CsvimportHelper.php      usr/share/ontowiki-csvimport
+CsvimportPlugin.php      usr/share/ontowiki-csvimport
+CsvParser.php            usr/share/ontowiki-csvimport
+DataCubeImporter.php     usr/share/ontowiki-csvimport
+ImporterInterface.php    usr/share/ontowiki-csvimport
+Importer.php             usr/share/ontowiki-csvimport
+lib                      usr/share/ontowiki-csvimport
+scripts                  usr/share/ontowiki-csvimport
+TabularImporter.php      usr/share/ontowiki-csvimport
+templates                usr/share/ontowiki-csvimport
+
+doap.n3                  etc/ontowiki-csvimport
+
