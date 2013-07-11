@@ -1,0 +1,13 @@
+#!/bin/sh -e
+# postinst script
+#
+# see: dh_installdeb(1)
+
+echo "---- starting postinst $@"
+
+rm -f /var/cache/ontowiki/zend_cache---OW_ow_extensionConfig
+
+#DEBHELPER#
+
+echo "---- ending postinst $@"
+

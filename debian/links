@@ -1,0 +1,2 @@
+/etc/ontowiki-csvimport/doap.n3 /usr/share/ontowiki-csvimport/doap.n3
+/usr/share/ontowiki-csvimport   /usr/share/ontowiki/extensions/csvimport
