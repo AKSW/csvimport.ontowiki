@@ -470,13 +470,10 @@ $(document).ready(function () {
 		console.log(dimensions);
         dimensionString = $.toJSON(dimensions);
 		
-        var url = window.location.href + '/results';
+        var url = staticUrlBase + 'csvimport/results';
+        console.log(url);
         $.get(url, function(data){
-            var div_str = '<div id="import-options" \
-            style="width:400px;height:150px;padding:5px;align:center;\
-            background:white;position:absolute;left:40%;top:30%;\
-            border: 1px solid #900; overflow: auto;">'+
-                data + '</div>';
+            var div_str = data;
             $('body').append( $(div_str) );
         });
     });
