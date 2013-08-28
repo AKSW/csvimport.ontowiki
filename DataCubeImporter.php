@@ -23,11 +23,13 @@ class DataCubeImporter extends Importer
     public function parseFile() {
         $this->logEvent("Parsing file..");
 
-        require_once 'CsvParser.php';
+        require_once("CsvParser.php");
+        $parsing_start = microtime(true);
         $parser = new CsvParser($this->uploadedFile);
         $this->parsedFile = array_filter($parser->getParsedFile());
+        $parsing_time = microtime(true) - $parsing_start;
 
-        $this->logEvent("File parsed!");
+        $this->logEvent("File parsed in $parsing_time seconds!");
     }
 
     public function importData() {
@@ -593,7 +595,7 @@ class DataCubeImporter extends Importer
                         //die;
 
                         $count++;
-                        if($count%1000 == 0){
+                        if($count%10 == 0){
                             $this->logEvent("Total triples saved: ".$count.". Still working..");
                         }
                         $ontowiki->selectedModel->addMultipleStatements($element);
