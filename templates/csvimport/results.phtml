@@ -32,8 +32,14 @@
                     url: logURL,
                     async:true
                 }).done(function(data){
-                    console.log(data);
-                    $("#import-options").html(data.replace(/\n/g, "<br/>"));
+                    var button = '<input type="button" id="visualize_import_btn" value="Show visualization"/><br/>';
+                    $("#import-options").html('');
+                    $("#import-options").append(button);
+                    $("#import-options").append(data.replace(/\n/g, "<br/>"));
+
+                    $("#visualize_import_btn").click(function() {
+                        window.location.href = staticUrlBase + "cubeviz/";
+                    });
                 });
 
                 if(done){
@@ -63,4 +69,5 @@
         <div style="width:100%; text-align: right;"><a href="#" onclick="return false;" id="close-results">[x]</a></div>
     </div>
 </div>
+
 <!--input type="button" id="proceed_to_visualization" value="Go to visualization" onclick="" hidden="true" /-->
