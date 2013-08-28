@@ -209,7 +209,7 @@ class CsvimportController extends OntoWiki_Controller_Component
             }
 
             if ($configuration) {
-                $importer->setConfiuration($configuration);
+                $importer->setConfiguration($configuration);
                 $importer->setParsedFile($store->parsedFile);
                 $store->results = $importer->importData();
                 $this->_helper->viewRenderer->setNoRender();
