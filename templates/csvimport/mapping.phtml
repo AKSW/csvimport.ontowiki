@@ -9,6 +9,7 @@
             echo "csvConfigs[".$i."] = '".wordwrap($this->configs[$i], 1024, "'\n+ '")."';\n";
         };
     }?>
+    var staticUrlBase = "<?php echo $this->staticUrlBase; ?>";
 </script>
 <?php if( isset($this->scovo) ): ?>
 <div><?php echo $this->_('Base URI:') ?><br><input type="text" id="uribase" value="initme" style="width:80%;margin-left:0.6em"></div>
