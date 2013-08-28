@@ -50,16 +50,3 @@ class RemoteFile
     }
 
 }
-    //public function getckandataAction()
-    //{
-        //require_once('RemoteFile.php');
-        //$test_uri = "http://data.london.gov.uk/datafiles/demographics/census-historic-population-borough.csv";
-        //$remoteFile = new RemoteFile($test_uri);
-        //$tempFile = $remoteFile->download();
-        //$store = $this->_getSessionStore();
-        //$store->importedFile = $tempFile;
-        //$store->importMode   = 'scovo'; 
-
-        //$this->_forward('mapping');
-    //}
-
