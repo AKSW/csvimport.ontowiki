@@ -35,6 +35,43 @@ class CsvimportController extends OntoWiki_Controller_Component
         $this->_forward('upload');
     }
 
+
+    public function processuriAction()
+    {
+        require_once('RemoteFile.php');
+        //$test_uri = "http://data.london.gov.uk/datafiles/demographics/census-historic-population-borough.csv";
+        //http://csvimport.vhost.tld/index.php/csvimport/?m=http%3A%2F%2Fcsvimport.vhost.tld%2Findex.php%2Fcsvimport_test%2F&ckanResourceUri=http://data.london.gov.uk/datafiles/demographics/census-historic-population-borough.csv
+        $ckanResourceUri = $this->_request->getParam ('ckanResourceUri', '');
+        $remoteFile = new RemoteFile($ckanResourceUri);
+        $tempFile = $remoteFile->download();
+        $importMode = 'scovo';
+
+        //create random model
+        $model = $this->_createRandomModel($ckanResourceUri);
+        $this->_owApp->selectedModel = $model;
+
+        if (is_readable($tempFile)) {
+            $store = $this->_getSessionStore();
+            $store->importedFile = $tempFile;
+            $store->importMode   = $importMode;
+            $store->resourceUrl  = $ckanResourceUri;
+
+            if($store->importMode == 'tabular') {
+                $store->csvSeparator = ",";
+                $store->headlineDetection = true;
+                if(empty($post['defaultSeparator'])) {
+                    $store->csvSeparator = str_replace("\\\\", '\\', $post['separator']);
+                }
+                if(empty($post['headlineDetection'])) {
+                    $store->headlineDetection = false;
+                }
+            }
+        }
+
+        // now we map
+        $this->_forward('mapping');
+    }
+
     public function uploadAction()
     {
         if (!isset($this->_request->upload)) {
@@ -121,6 +158,7 @@ class CsvimportController extends OntoWiki_Controller_Component
                 $store = $this->_getSessionStore();
                 $store->importedFile = $tempFile;
                 $store->importMode   = $post['importMode'];
+                $store->resourceUrl  = 'local';
 
                 if($store->importMode == 'tabular') {
                     $store->csvSeparator = ",";
@@ -141,6 +179,7 @@ class CsvimportController extends OntoWiki_Controller_Component
     }
 
     public function mappingAction(){
+        $this->view->staticUrlBase = $this->_config->staticUrlBase;
         $store = $this->_getSessionStore();
         if (!empty($store->importMode)) {
             $configuration = null;
@@ -152,21 +191,10 @@ class CsvimportController extends OntoWiki_Controller_Component
                                                     array('headlineDetection' => $store->headlineDetection,
                                                           'separator' => $store->csvSeparator)
                                                    );
-
-                    if (!empty($this->_request->dimensions)) {
-                        $json = $this->_request->dimensions;
-                        $json = str_replace('\\"', '"', $json);
-                        $configuration = json_decode($json, true);
-                    }
-                break;
+                    break;
                 case "scovo" :
                     require_once('DataCubeImporter.php');
                     $importer = new DataCubeImporter($this->view, $this->_privateConfig);
-                    if (!empty($this->_request->dimensions)) {
-                        $json = $this->_request->dimensions;
-                        $json = str_replace('\\"', '"', $json);
-                        $configuration = json_decode($json, true);
-                    }
                     break;
                 default:
                     break;
@@ -174,8 +202,14 @@ class CsvimportController extends OntoWiki_Controller_Component
 
             $importer->setFile($store->importedFile);
 
+            if (!empty($this->_request->dimensions)) {
+                $json = $this->_request->dimensions;
+                $json = str_replace('\\"', '"', $json);
+                $configuration = json_decode($json, true);
+            }
+
             if ($configuration) {
-                $importer->setConfiguration($configuration);
+                $importer->setConfiuration($configuration);
                 $importer->setParsedFile($store->parsedFile);
                 $store->results = $importer->importData();
                 $this->_helper->viewRenderer->setNoRender();
@@ -211,8 +245,9 @@ class CsvimportController extends OntoWiki_Controller_Component
 
 
     protected function getStoredConfigurationUris() {
-        $dir = $this->_owApp->extensionManager->getExtensionPath('csvimport').'/configs/';
+        $dir = $this->_getConfigurationDir();
         if(!is_dir($dir)) return;
+
         $configurations = array();
 
         if ($dh = opendir($dir)) {
@@ -253,7 +288,6 @@ class CsvimportController extends OntoWiki_Controller_Component
                                                         'label' => $entry['configLabel'],
                                                         'config' => base64_decode($entry['configuration']) );
             }
-//var_dump($configurations);
             return $configurations;
         }
         return array();
@@ -263,6 +297,8 @@ class CsvimportController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
 
+        //$this->_createBaseModel() - by default requires Admin privileges
+        //TODO: give the privileges to anonym
         if( $this->_createBaseModel() ){
             // get post params
             $post = $this->_request->getPost();
@@ -270,12 +306,37 @@ class CsvimportController extends OntoWiki_Controller_Component
             $val = $post['configString'];
             $name = str_replace(" ", "_", $post['configName']);
 
-            $dir = $this->_owApp->extensionManager->getExtensionPath('csvimport').'/configs/';
+            $dir = $this->_getConfigurationDir();
+            if(!$this->_checkCreateDir($dir)) {
+                echo "something was wrong while creating log at : " . $dir;
+            }
 
             $fp = fopen($dir.$name.'.cfg', 'w');
             fwrite($fp, $val);
             fclose($fp);
+        } 
+        
+    }
+
+    protected function _getConfigurationDir() {
+        $dir = $this->_owApp->extensionManager->getExtensionPath('csvimport').'/configs/';
+        $store = $this->_getsessionstore();
+        if($store->resourceUrl == 'local') {
+            $dir = $dir . 'local/';
+        } else {
+            $md5 = md5($store->resourceUrl);
+            $dir = $dir . $md5 . '/';
         }
+        return $dir;
+    }
+
+    protected function _checkCreateDir($dir) {
+        if(!is_dir($dir)) {
+            if(!mkdir($dir, 0777, true)){
+                return False;
+            }
+        }
+        return True;
     }
 
     protected function _createBaseModel(){
@@ -348,6 +409,24 @@ class CsvimportController extends OntoWiki_Controller_Component
 
     protected function _destroySessionStore(){
         Zend_Session::namespaceUnset('CSV_IMPORT_SESSION');
+    }
+
+    protected function _createRandomModel($ckanResourceUri) {
+        //generate model name
+        //$modelName = 'http://csv2rdf.aksw.org/' . md5($ckanResourceUri) . '/' . time();
+        $modelName = 'http://csv2rdf.aksw.org/test';
+
+        $this->_store = Erfurt_App::getInstance()->getStore();
+        $this->_storeAdapter = Erfurt_App::getInstance(false)->getStore()->getBackendAdapter();
+        $this->_storeAdapter->createModel($modelName);
+        $model = $this->_store->getModel($modelName);
+        //$this->_storeAdapter->deleteModel($modelName);
+
+        $this->_ac           = Erfurt_App::getInstance(false)->getAc();
+        $this->_ac->setUserModelRight($modelName, 'view', 'grant');
+        $this->_ac->setUserModelRight($modelName, 'edit', 'grant');
+
+        return $model;
     }
 }
 
