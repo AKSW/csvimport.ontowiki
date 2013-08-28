@@ -2,11 +2,14 @@
     $(document).ready(function(){
         $("#save_template_btn").click(function(){
             // action url
-            var url = window.location.href + '/saveconfig';
+            var url = staticUrlBase + 'csvimport/saveconfig';
             // template name
             var name = $("#template_name").val();
+            console.log(name);
+            console.log(url);
+            console.log(dimensionString);
             // post
-            $.post(url, {configName: name, configString:dimensionString}, function(data){
+            $.post(url, {configName: name, configString:dimensionString, resourceUrl: url}, function(data){
                 if(data.length < 1){
                     alert("Done!");
                 }else{
@@ -23,25 +26,41 @@
             $("#import-options").css("height", "500px");
             var done = false;
             var updater = window.setInterval(function(){
-                $.get("csvimport/importlog", function(data){
+                logURL = staticUrlBase + "csvimport/importlog";
+                $.ajax({
+                    type: 'POST',
+                    url: logURL,
+                    async:true
+                }).done(function(data){
+                    console.log(data);
                     $("#import-options").html(data.replace(/\n/g, "<br/>"));
                 });
+
                 if(done){
                     window.clearInterval(updater);
                 };
-            }, 5000);
-			console.log(dimensionString);
-            $.post(actionURL, {dimensions: dimensionString}, function () {
-                //alert('Success');
+            }, 1000);
+
+            var success_function = function(){
                 done = true;
+            }
+            $.ajax({
+                type: 'POST',
+                url: actionURL,
+                data: {dimensions: dimensionString},
+                success: success_function(),
+                async:true
             });
         })
     })
 </script>
-<div align="center" style="height: 100%; vertical-align: middle; overflow: auto;">
-    <b>Import options.</b><br/>
-    <input type="text" id="template_name" value="Template Name" /><br/>
-    <input type="button" id="save_template_btn" value="Save Template" onclick="" /><br/>
-    <input type="button" id="extract_triples_btn" value="Extract triples" onclick="" /><br/>
-    <div style="width:100%; text-align: right;"><a href="#" onclick="return false;" id="close-results">[x]</a></div>
+<div id="import-options" style="width:400px;height:150px;padding:5px;align:center; background:white;position:absolute;left:40%;top:30%; border: 1px solid #900; overflow: auto;">
+    <div align="center" style="height: 100%; vertical-align: middle; overflow: auto;">
+        <b>Import options.</b><br/>
+        <input type="text" id="template_name" value="Template Name" /><br/>
+        <input type="button" id="save_template_btn" value="Save Template" onclick="" /><br/>
+        <input type="button" id="extract_triples_btn" value="Extract triples" onclick="" /><br/>
+        <div style="width:100%; text-align: right;"><a href="#" onclick="return false;" id="close-results">[x]</a></div>
+    </div>
 </div>
+<!--input type="button" id="proceed_to_visualization" value="Go to visualization" onclick="" hidden="true" /-->
