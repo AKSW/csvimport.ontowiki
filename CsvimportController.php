@@ -28,6 +28,13 @@ class CsvimportController extends OntoWiki_Controller_Component
 
         // remove navigation tab
         OntoWiki::getInstance()->getNavigation()->disableNavigation();
+
+        // authenticate as Admin
+        // TODO: grant permissions to edit everything to anonym
+        $erfurt = $this->_owApp->erfurt;
+        $username   = 'Admin';
+        $password   = '';
+        $authResult = $erfurt->authenticate($username, $password);
     }
 
     public function indexAction()
