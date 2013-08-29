@@ -48,8 +48,9 @@ class CsvimportController extends OntoWiki_Controller_Component
         require_once('RemoteFile.php');
         //$test_uri = "http://data.london.gov.uk/datafiles/demographics/census-historic-population-borough.csv";
         //http://csvimport.vhost.tld/index.php/csvimport/?m=http%3A%2F%2Fcsvimport.vhost.tld%2Findex.php%2Fcsvimport_test%2F&ckanResourceUri=http://data.london.gov.uk/datafiles/demographics/census-historic-population-borough.csv
-        $ckanResourceUri = $this->_request->getParam ('ckanResourceUri', '');
-        $remoteFile = new RemoteFile($ckanResourceUri);
+        $ckanResourceId = $this->_request->getParam ('resource_id', '');
+        $remoteFile = new RemoteFile($ckanResourceId);
+        $ckanResourceUri = $remoteFile->uri;
         $tempFile = $remoteFile->download();
         $importMode = 'scovo';
 

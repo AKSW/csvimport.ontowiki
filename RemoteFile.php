@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 /**
  * This file is part of the {@link http://ontowiki.net OntoWiki} project.
  *
@@ -17,9 +16,24 @@
  */
 class RemoteFile 
 {
-    public function __construct($uri) {
-        $this->uri = $uri;
+    public function __construct($ckanResourceId) {
+        $this->ckanResourceId = $ckanResourceId;
+        $this->uri = $this->getUri($this->ckanResourceId);
         $this->localPath = $this->createTempFile();
+    }
+
+    private function getUri($ckanResourceId) {
+        include_once 'Zend/Http/Client.php';
+        $client = new Zend_Http_Client();
+        $client->setUri('http://csv2rdf.aksw.org/getUriByCkanResourceId');
+        $client->setMethod(Zend_Http_Client::POST);
+        $client->setParameterPost('resource_id', $ckanResourceId);
+        $result = $client->request();
+        if($result->isError()){
+            echo $result->getStatus();
+        } else {
+            return json_decode($result->getBody());
+        }
     }
 
     private function createTempFile() {
