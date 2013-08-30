@@ -63,8 +63,6 @@
 
 <style media="screen" type="text/css">
 #import-options {
-    width:400px;
-    height:150px;
     padding:5px;
     align:center; 
     background:white;
@@ -74,15 +72,27 @@
     border: 1px solid #900; 
     overflow: auto;
 }
+#template_name {
+    height: 30px;
+    border: 1px solid #900; 
+    overflow: auto;
+}
+#close-results {
+    position: absolute;
+    left: 263px;
+    overflow: auto;
+}
 </style>
 
-<div id="import-options">
-    <div align="center" style="height: 100%; vertical-align: middle; overflow: auto;">
-        <b>Import options.</b><br/>
-        <input type="text" id="template_name" value="Template Name" /><br/>
-        <input type="button" id="save_template_btn" value="Save Template" onclick="" /><br/>
-        <input type="button" id="extract_triples_btn" value="Extract triples" onclick="" /><br/>
-        <div style="width:100%; text-align: right;"><a href="#" onclick="return false;" id="close-results">[x]</a></div>
+<div class="prompt" id="import-options">
+    <b>Import Options</b>
+    <a href="#" onclick="return false;" id="close-results">[x]</a><br/>
+    <div align="center" style="height: 100%; vertical-align: middle; overflow: auto; padding-bottom:5px;">
+        <input class="prompt-input" type="text" id="template_name" value="Template Name" />
+        <input class="prompt-add" type="button" id="save_template_btn" value="Save Template" onclick="" /><br/>
+    </div>
+    <div style="width:100%; text-align: center;">
+        <input class="prompt-extract" type="button" id="extract_triples_btn" value="Extract triples" onclick="" />
     </div>
 </div>
 

@@ -500,10 +500,10 @@ $(document).ready(function () {
         dimensionString = $.toJSON(dimensions);
 		
         var url = staticUrlBase + 'csvimport/results';
-        console.log(url);
         $.get(url, function(data){
             var div_str = data;
             $('body').append( $(div_str) );
+            $('#import-options').draggable();
         });
     });
 
