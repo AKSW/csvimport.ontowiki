@@ -239,7 +239,22 @@ $(document).ready(function () {
      *  DIMENSIONS STUFF
      */
     $('#btn-add-dimension').click(function () {
-        var name = prompt('Dimension name:');
+        $("#dimension-prompt").show();
+        $("#dimension-prompt").draggable();
+    });
+
+    $('#dimension-prompt-add').click(function() {
+        var dimension_name = '';
+        dimension_name = $('#dimension-prompt-name').val();
+        processDimensionName(dimension_name);
+        $('#dimension-prompt').hide();
+    });
+    
+    $('#dimension-prompt-cancel').click(function() {
+        $('#dimension-prompt').hide();
+    });
+
+    function processDimensionName(name) {
         if ( typeof name == 'undefined' || name.length < 1) return;
 
         var eid = name.replace(/ /g,'_');
@@ -287,8 +302,7 @@ $(document).ready(function () {
         };
         _propertySelector = new ObjectSelector(conceptModel, _subjectURI, "http://purl.org/linked-data/cube#concept", selectorOptions);
         _propertySelector.presentInContainer();
-
-    });
+    }
 
     $('#csvimport-dimensions tr').live('click', function () {
         var name = $(this).children('td').eq(0).attr("name");
@@ -331,7 +345,23 @@ $(document).ready(function () {
      * ATTRIBUTES STUFF
      */
     $('#btn-attribute').live('click', function () {
-        var name = prompt('Attribute name:');
+        $("#attribute-prompt").show();
+        $("#attribute-prompt").draggable();
+    });
+
+    $('#attribute-prompt-add').click(function() {
+        var attribute_name = '';
+        attribute_name = $('#attribute-prompt-name').val();
+        processAttributeName(attribute_name);
+        $('#attribute-prompt').hide();
+    });
+    
+    $('#attribute-prompt-cancel').click(function() {
+        $('#attribute-prompt').hide();
+    });
+
+    function processAttributeName(attribute_name) {
+        var name = attribute_name;
         if ( typeof name == 'undefined' || name.length < 1) return;
 
         var eid = name.replace(/ /g,'_');
@@ -370,9 +400,8 @@ $(document).ready(function () {
         // FIXME: title hack
         _propertySelector = new ObjectSelector(attributeModel, _subjectURI, "http://www.w3.org/2000/01/rdf-schema#subPropertyOf", selectorOptions);
         _propertySelector.presentInContainer();
+    }
 
-
-    });
 
     $('#csvimport-attributes tr').live('click', function () {
         var name = $(this).children('td').eq(0).attr("name");
