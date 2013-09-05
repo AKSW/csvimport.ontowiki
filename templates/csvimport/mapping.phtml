@@ -11,6 +11,143 @@
     }?>
     var staticUrlBase = "<?php echo $this->staticUrlBase; ?>";
 </script>
+
+<style media="screen" type="text/css">
+.prompt {
+    padding:5px;
+    align:center; 
+    background:white;
+    position:absolute;
+    left:40%;
+    top:30%; 
+    border: 1px solid #900; 
+    overflow: auto;
+}
+.with-border {
+    height:30px;
+    padding:5px;
+    border: 1px solid #900; 
+    display: inline-block;
+}
+.prompt-input {
+    border:1px solid #9E9E9E;
+    color: #000000;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-size: 11px;
+    font-family: Verdana;
+    background: #FFF;
+    text-decoration:none;
+    text-align:center;
+}
+.prompt-add {
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    background-color:#ededed;
+    -webkit-border-top-left-radius:6px;
+    -moz-border-radius-topleft:6px;
+    border-top-left-radius:6px;
+    -webkit-border-top-right-radius:6px;
+    -moz-border-radius-topright:6px;
+    border-top-right-radius:6px;
+    -webkit-border-bottom-right-radius:6px;
+    -moz-border-radius-bottomright:6px;
+    border-bottom-right-radius:6px;
+    -webkit-border-bottom-left-radius:6px;
+    -moz-border-radius-bottomleft:6px;
+    border-bottom-left-radius:6px;
+    text-indent:0;
+    border:1px solid #dcdcdc;
+    display:inline-block;
+    color:#777777;
+    font-family:arial;
+    font-size:15px;
+    font-weight:bold;
+    font-style:normal;
+    height:30px;
+    width:150px;
+    text-decoration:none;
+    text-align:center;
+    text-shadow:1px 1px 0px #ffffff;
+}.prompt-add:hover {
+    background-color:#dfdfdf;
+}.prompt-add:active {
+    position:relative;
+    top:1px;
+}
+
+.prompt-cancel {
+    position: absolute;
+    left: 263px;
+
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    background-color:#FFFFFF;
+    -webkit-border-top-left-radius:6px;
+    -moz-border-radius-topleft:6px;
+    border-top-left-radius:6px;
+    -webkit-border-top-right-radius:6px;
+    -moz-border-radius-topright:6px;
+    border-top-right-radius:6px;
+    -webkit-border-bottom-right-radius:6px;
+    -moz-border-radius-bottomright:6px;
+    border-bottom-right-radius:6px;
+    -webkit-border-bottom-left-radius:6px;
+    -moz-border-radius-bottomleft:6px;
+    border-bottom-left-radius:6px;
+    text-indent:0;
+    border:1px solid #dcdcdc;
+    display:inline-block;
+    font-family:arial;
+    font-style:normal;
+    width:30px;
+    text-decoration:none;
+    text-align:center;
+    text-shadow:1px 1px 0px #ffffff;
+}.prompt-cancel:hover {
+    background-color:#dfdfdf;
+}
+
+.prompt-extract {
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    background-color:#ededed;
+    -webkit-border-top-left-radius:6px;
+    -moz-border-radius-topleft:6px;
+    border-top-left-radius:6px;
+    -webkit-border-top-right-radius:6px;
+    -moz-border-radius-topright:6px;
+    border-top-right-radius:6px;
+    -webkit-border-bottom-right-radius:6px;
+    -moz-border-radius-bottomright:6px;
+    border-bottom-right-radius:6px;
+    -webkit-border-bottom-left-radius:6px;
+    -moz-border-radius-bottomleft:6px;
+    border-bottom-left-radius:6px;
+    text-indent:0;
+    border:1px solid #dcdcdc;
+    display:inline-block;
+    color:#000000;
+    font-family:arial;
+    font-size:15px;
+    font-weight:bold;
+    font-style:normal;
+    height:30px;
+    width:150px;
+    text-decoration:none;
+    text-align:center;
+    text-shadow:1px 1px 0px #ffffff;
+}.prompt-extract:hover {
+    background-color:#dfdfdf;
+}.prompt-extract:active {
+    position:relative;
+    top:1px;
+}
+</style>
+
 <?php if( isset($this->scovo) ): ?>
 <div><?php echo $this->_('Base URI:') ?><br><input type="text" id="uribase" value="initme" style="width:80%;margin-left:0.6em"></div>
 
@@ -36,4 +173,18 @@
 <?php endif; ?>
 <div style="position: relative; overflow: auto; width: 100%; height: 100%;" id="table-holder">
 <?php echo $this->table; ?>
+</div>
+
+<div class="prompt" id="dimension-prompt" style="display:none;">
+    <span>Specify the dimension label:</span>
+    <input class="prompt-cancel with-border" type="button" id="dimension-prompt-cancel" value="[x]" onclick="" /><br/>
+    <input class="prompt-input with-border" type="text" id="dimension-prompt-name" value="Dimension Name" />
+    <input class="prompt-add with-border" type="button" id="dimension-prompt-add" value="Add Dimension" onclick="" />
+</div>
+
+<div class="prompt" id="attribute-prompt" style="display:none;">
+    <span>Specify the attribute label:</span>
+    <input class="prompt-cancel with-border" type="button" id="attribute-prompt-cancel" value="[x]" onclick="" /><br/>
+    <input class="prompt-input with-border" type="text" id="attribute-prompt-name" value="Attribute Name" />
+    <input class="prompt-add with-border" type="button" id="attribute-prompt-add" value="Add Attribute" onclick="" />
 </div>
