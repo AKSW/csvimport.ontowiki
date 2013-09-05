@@ -55,7 +55,7 @@ class CsvimportController extends OntoWiki_Controller_Component
         $importMode = 'scovo';
 
         //create random model
-        $model = $this->_createRandomModel($ckanResourceUri);
+        $model = $this->_createRandomModel($ckanResourceId);
         $this->_owApp->selectedModel = $model;
 
         if (is_readable($tempFile)) {
@@ -419,10 +419,10 @@ class CsvimportController extends OntoWiki_Controller_Component
         Zend_Session::namespaceUnset('CSV_IMPORT_SESSION');
     }
 
-    protected function _createRandomModel($ckanResourceUri) {
+    protected function _createRandomModel($ckanResourceId) {
         //generate model name
         //$modelName = 'http://csv2rdf.aksw.org/' . md5($ckanResourceUri) . '/' . time();
-        $modelName = 'http://csv2rdf.aksw.org/test';
+        $modelName = 'http://csv2rdf.aksw.org/' . $ckanResourceId;
 
         $this->_store = Erfurt_App::getInstance()->getStore();
         $this->_storeAdapter = Erfurt_App::getInstance(false)->getStore()->getBackendAdapter();
