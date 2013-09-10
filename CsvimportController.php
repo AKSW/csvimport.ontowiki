@@ -326,6 +326,27 @@ class CsvimportController extends OntoWiki_Controller_Component
         
     }
 
+    protected function processfileAction(){
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        $ckanResourceId = $this->_request->getParam ('resource_id', '');
+
+        $this->_store = Erfurt_App::getInstance()->getStore();
+        $this->_storeAdapter = Erfurt_App::getInstance(false)->getStore()->getBackendAdapter();
+
+        $graphUri = 'http://csv2rdf.aksw.org/' . $ckanResourceId;
+        $type = 'n3'; //csv2rdf provide n3 data
+        $locator = Erfurt_Syntax_RdfParser::LOCATOR_FILE;
+
+        $data = "/tmp/test.n3";
+
+        $this->_storeAdapter->importRdf($graphUri, $data, $type, $locator);
+        $defaultGraphUri=$graphUri;
+        $serviceUri='http;//datacube.aksw.org/sparql';
+        header('Location: http://datacube.aksw.org/facete-server/?default-graph-uri='.$defaultGraphUri.'&service-uri='.$serviceUri);
+
+    }
+
     protected function _getConfigurationDir() {
         $dir = $this->_owApp->extensionManager->getExtensionPath('csvimport').'/configs/';
         $store = $this->_getsessionstore();
@@ -426,9 +447,9 @@ class CsvimportController extends OntoWiki_Controller_Component
 
         $this->_store = Erfurt_App::getInstance()->getStore();
         $this->_storeAdapter = Erfurt_App::getInstance(false)->getStore()->getBackendAdapter();
+        $this->_storeAdapter->deleteModel($modelName);
         $this->_storeAdapter->createModel($modelName);
         $model = $this->_store->getModel($modelName);
-        //$this->_storeAdapter->deleteModel($modelName);
 
         $this->_ac           = Erfurt_App::getInstance(false)->getAc();
         $this->_ac->setUserModelRight($modelName, 'view', 'grant');
