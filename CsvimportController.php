@@ -23,8 +23,8 @@ class CsvimportController extends OntoWiki_Controller_Component
         // init component
         parent::init();
 
-        $this->view->headScript()->appendFile($this->_componentUrlBase . 'scripts/csvimport.js');
         $this->view->headScript()->appendFile($this->_componentUrlBase . 'scripts/rdfa.object.js');
+        $this->view->headScript()->appendFile($this->_componentUrlBase . 'scripts/csvimport.js');
 
         // remove navigation tab
         OntoWiki::getInstance()->getNavigation()->disableNavigation();
@@ -182,7 +182,7 @@ class CsvimportController extends OntoWiki_Controller_Component
             } else {
                 //get stored Configurations
                 $importer->setStoredConfigurations($this->getStoredConfigurationUris());
-                $importer->createConfigurationView($this->_config->urlBase);
+                $importer->createConfigurationView($this->_config->staticUrlBase);
                 $store->parsedFile = $importer->getParsedFile();
             }
         }

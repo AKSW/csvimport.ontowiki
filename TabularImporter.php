@@ -167,7 +167,7 @@ class TabularImporter extends Importer
 
         $this->view->table = $this->view->partial('importer/tabular.phtml', array(
                     'data' => $data,
-                    'script' => $this->componentConfig->urlBase . 'extensions/csvimport/scripts/autosuggest.js',
+                    'script' => $urlBase . 'extensions/csvimport/scripts/autosuggest.js',
                     'tableClass' => 'csvimport',
                     'examples' => $this->parsedFile[0],
                     'baseUri'  => $model->getModelUri(),
