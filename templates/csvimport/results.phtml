@@ -32,14 +32,14 @@
                     url: logURL,
                     async:true
                 }).done(function(data){
-                    var button = '<input type="button" id="visualize_import_btn" value="Show visualization"/><br/>';
-                    $("#import-options").html('');
-                    $("#import-options").append(button);
+                    //var button = '<input type="button" id="visualize_import_btn" value="Show visualization"/><br/>';
+                    //$("#import-options").html('');
+                    //$("#import-options").append(button);
                     $("#import-options").append(data.replace(/\n/g, "<br/>"));
 
-                    $("#visualize_import_btn").click(function() {
-                        window.location.href = staticUrlBase + "cubeviz/";
-                    });
+                    //$("#visualize_import_btn").click(function() {
+                    //    window.location.href = staticUrlBase + "cubeviz/";
+                    //});
                 });
 
                 if(done){

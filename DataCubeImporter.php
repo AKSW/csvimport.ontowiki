@@ -595,7 +595,7 @@ class DataCubeImporter extends Importer
                         //die;
 
                         $count++;
-                        if($count%10 == 0){
+                        if($count%1000 == 0){
                             $this->logEvent("Total triples saved: ".$count.". Still working..");
                         }
                         $ontowiki->selectedModel->addMultipleStatements($element);
