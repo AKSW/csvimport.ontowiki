@@ -23,13 +23,11 @@ class DataCubeImporter extends Importer
     public function parseFile() {
         $this->logEvent("Parsing file..");
 
-        require_once("CsvParser.php");
-        $parsing_start = microtime(true);
+        require_once 'CsvParser.php';
         $parser = new CsvParser($this->uploadedFile);
         $this->parsedFile = array_filter($parser->getParsedFile());
-        $parsing_time = microtime(true) - $parsing_start;
 
-        $this->logEvent("File parsed in $parsing_time seconds!");
+        $this->logEvent("File parsed!");
     }
 
     public function importData() {
@@ -129,32 +127,32 @@ class DataCubeImporter extends Importer
         $comment = $this->componentConfig->class->comment;
         
         // qb vars
-		$qbDimension = $this->componentConfig->qb->dimension;
+                $qbDimension = $this->componentConfig->qb->dimension;
         $qbDimensionProperty = $this->componentConfig->qb->DimensionProperty;
         $qbconcept = $this->componentConfig->qb->concept;
-		$qbAttribute = $this->componentConfig->qb->attribute;
-		$qbAttributeProperty = $this->componentConfig->qb->AttributeProperty;
-		$qbMeasure = $this->componentConfig->qb->measure;
-		$qbMeasureProperty = $this->componentConfig->qb->MeasureProperty; 
-		$qbComponentProperty = $this->componentConfig->qb->componentProperty;
-		$qbComponentSpecification = $this->componentConfig->qb->ComponentSpecification;
-		$qbDataSet = $this->componentConfig->qb->DataSet;
-		$structure = $this->componentConfig->qb->structure;
-		
-        foreach ($this->configuration as $url => $dim) {		
-			//temporary element object 
-			$element = array();
+                $qbAttribute = $this->componentConfig->qb->attribute;
+                $qbAttributeProperty = $this->componentConfig->qb->AttributeProperty;
+                $qbMeasure = $this->componentConfig->qb->measure;
+                $qbMeasureProperty = $this->componentConfig->qb->MeasureProperty; 
+                $qbComponentProperty = $this->componentConfig->qb->componentProperty;
+                $qbComponentSpecification = $this->componentConfig->qb->ComponentSpecification;
+                $qbDataSet = $this->componentConfig->qb->DataSet;
+                $structure = $this->componentConfig->qb->structure;
+                
+        foreach ($this->configuration as $url => $dim) {                
+                        //temporary element object 
+                        $element = array();
             // filter blank stuff and 
-			// and also the 'uribase','dataset' case
+                        // and also the 'uribase','dataset' case
             if((strlen($dim['label']) < 1) || ($url == "uribase") || ($url == "datastructure") )
-				continue;
+                                continue;
             // if it's an attribute
             else if( isset($dim['attribute']) && $dim['attribute'] == true) {                
                 // save measure
                 $this->measures[] = array(
                     'url' => $url,
                     //'uri' => $dim['uri'],
-					'uri' => $qbAttribute,
+                                        'uri' => $qbAttribute,
                     'label' => $dim['label'],
                     'value' => $dim['value']
                 );
@@ -164,9 +162,9 @@ class DataCubeImporter extends Importer
                     $type => array(
                         array(
                             'type' => 'uri',
-							//why is this Attribute type decided by the user, isn't it always a qb:AttributeProperty?
+                                                        //why is this Attribute type decided by the user, isn't it always a qb:AttributeProperty?
                             //'value' => $dim['uri']
-							'value' => $qbAttributeProperty
+                                                        'value' => $qbAttributeProperty
                             )
                         ),
                     $label => array(
@@ -182,35 +180,35 @@ class DataCubeImporter extends Importer
                         )
                     )
                 );
-				$element[$url."_CS"] = array (
-					$type => array(
-						array(
-							'type' => 'uri',
-							'value' => $qbComponentSpecification
-							)
-						),
-					$qbAttribute => array(
-						array(
-							'type' => 'uri',
-							'value' => $url
-							)
-						),
-					$label => array (
-						array(
-							'type' => 'literal',
-							'value' => $dim['label']."_CS"
-							)
-						)
-				);
-				$elements[] = $element;
-			} 
-			// if it's a measure
-			else if($url == "measure") {
+                                $element[$url."_CS"] = array (
+                                        $type => array(
+                                                array(
+                                                        'type' => 'uri',
+                                                        'value' => $qbComponentSpecification
+                                                        )
+                                                ),
+                                        $qbAttribute => array(
+                                                array(
+                                                        'type' => 'uri',
+                                                        'value' => $url
+                                                        )
+                                                ),
+                                        $label => array (
+                                                array(
+                                                        'type' => 'literal',
+                                                        'value' => $dim['label']."_CS"
+                                                        )
+                                                )
+                                );
+                                $elements[] = $element;
+                        } 
+                        // if it's a measure
+                        else if($url == "measure") {
                 $element[$dim['uri']] = array(
                     $type => array(
                         array(
                             'type' => 'uri',
-							'value' => $qbMeasureProperty
+                                                        'value' => $qbMeasureProperty
                             )
                         ),
                     $label => array(
@@ -220,35 +218,35 @@ class DataCubeImporter extends Importer
                             )
                         )
                 );
-				$element[$dim['uri']."_CS"] = array (
-					$type => array(
-						array(
-							'type' => 'uri',
-							'value' => $qbComponentSpecification
-							)
-						),
-					$qbMeasure => array(
-						array(
-							'type' => 'uri',
-							'value' => $dim['uri']
-							)
-						),
-					$label => array (
-						array(
-							'type' => 'literal',
-							'value' => $dim['label']."_CS"
-							)
-						)
-				);
-				$elements[] = $element;
-			}   
-			// if it's a dataset
-			else if($url == "dataset") {
+                                $element[$dim['uri']."_CS"] = array (
+                                        $type => array(
+                                                array(
+                                                        'type' => 'uri',
+                                                        'value' => $qbComponentSpecification
+                                                        )
+                                                ),
+                                        $qbMeasure => array(
+                                                array(
+                                                        'type' => 'uri',
+                                                        'value' => $dim['uri']
+                                                        )
+                                                ),
+                                        $label => array (
+                                                array(
+                                                        'type' => 'literal',
+                                                        'value' => $dim['label']."_CS"
+                                                        )
+                                                )
+                                );
+                                $elements[] = $element;
+                        }   
+                        // if it's a dataset
+                        else if($url == "dataset") {
                 $element[$dim['uri']] = array(
                     $type => array(
                         array(
                             'type' => 'uri',
-							'value' => $qbDataSet
+                                                        'value' => $qbDataSet
                             )
                         ),
                     $label => array(
@@ -257,119 +255,119 @@ class DataCubeImporter extends Importer
                             'value' => $dim['label']
                             )
                         ),
-					$structure => array( 
-					    array(
-						    'type' => 'uri',
-							'value' => $this->configuration["datastructure"]["uri"]
-						)
-					)
-				);
-				$elements[] = $element;
-			}
-			// the component case 
-			else {
-				// component and its component specification
-				$element[$url] = array(
-					$type => array(
-						array(
-							'type' => 'uri',
-							'value' => $qbDimensionProperty
-							)
-						),
-					$label => array(
-						array(
-							'type' => 'literal',
-							'value' => $dim['label']
-							)
-						)
-				);
-				if( preg_match('/\D/', $dim['label']) <= 0  ){
-					$element[$url] = array_merge($element[$url],
-						array(
-							$value_predicate => array(
-								array(
-									'type' => 'integer',
-									'value' => intval($dim['label'])
-								)
-							)
-						)
-					);
-				}
-				$element[$url."_CS"] = array (
-					$type => array(
-						array(
-							'type' => 'uri',
-							'value' => $qbComponentSpecification
-							)
-						),
-					$qbDimension => array(
-						array(
-							'type' => 'uri',
-							'value' => $url
-							)
-						),
-					$label => array (
-						array(
-							'type' => 'literal',
-							'value' => $dim['label']."_CS"
-							)
-						)
-				);
-				
-				// set subPropertyOf
-				if( isset($dim['subproperty']) ){
-					$element[$url] = array_merge($element[$url], 
-						array(
-							$subPropertyOf => array(
-								array(
-									'type' => 'uri',
-									'value' => $dim['subproperty']
-								)
-							)
-						)
-					);
-				}
-				
-				// set concept
-				if( isset($dim['concept']) ){
-					$element[$url] = array_merge($element[$url], 
-						array(
-							$qbcomponentProperty => array(
-								array(
-									'type' => 'uri',
-									'value' => $dim['concept']
-								)
-							)
-						)
-					);
-				}
-				
-				$elements[] = $element;
+                                        $structure => array( 
+                                            array(
+                                                    'type' => 'uri',
+                                                        'value' => $this->configuration["datastructure"]["uri"]
+                                                )
+                                        )
+                                );
+                                $elements[] = $element;
+                        }
+                        // the component case 
+                        else {
+                                // component and its component specification
+                                $element[$url] = array(
+                                        $type => array(
+                                                array(
+                                                        'type' => 'uri',
+                                                        'value' => $qbDimensionProperty
+                                                        )
+                                                ),
+                                        $label => array(
+                                                array(
+                                                        'type' => 'literal',
+                                                        'value' => $dim['label']
+                                                        )
+                                                )
+                                );
+                                if( preg_match('/\D/', $dim['label']) <= 0  ){
+                                        $element[$url] = array_merge($element[$url],
+                                                array(
+                                                        $value_predicate => array(
+                                                                array(
+                                                                        'type' => 'integer',
+                                                                        'value' => intval($dim['label'])
+                                                                )
+                                                        )
+                                                )
+                                        );
+                                }
+                                $element[$url."_CS"] = array (
+                                        $type => array(
+                                                array(
+                                                        'type' => 'uri',
+                                                        'value' => $qbComponentSpecification
+                                                        )
+                                                ),
+                                        $qbDimension => array(
+                                                array(
+                                                        'type' => 'uri',
+                                                        'value' => $url
+                                                        )
+                                                ),
+                                        $label => array (
+                                                array(
+                                                        'type' => 'literal',
+                                                        'value' => $dim['label']."_CS"
+                                                        )
+                                                )
+                                );
+                                
+                                // set subPropertyOf
+                                if( isset($dim['subproperty']) ){
+                                        $element[$url] = array_merge($element[$url], 
+                                                array(
+                                                        $subPropertyOf => array(
+                                                                array(
+                                                                        'type' => 'uri',
+                                                                        'value' => $dim['subproperty']
+                                                                )
+                                                        )
+                                                )
+                                        );
+                                }
+                                
+                                // set concept
+                                if( isset($dim['concept']) ){
+                                        $element[$url] = array_merge($element[$url], 
+                                                array(
+                                                        $qbcomponentProperty => array(
+                                                                array(
+                                                                        'type' => 'uri',
+                                                                        'value' => $dim['concept']
+                                                                )
+                                                        )
+                                                )
+                                        );
+                                }
+                                
+                                $elements[] = $element;
 
-				// types
-				foreach ($dim['elements'] as $eurl => $elem) {
-					$element = array();
+                                // types
+                                foreach ($dim['elements'] as $eurl => $elem) {
+                                        $element = array();
 
-					// type of new dimension
-					$element[$eurl] = array(
-						$type => array(
-							array(
-								'type' => 'uri',
-								'value' => $url
-								)
-							),
-						$label => array(
-							array(
-								'type' => 'literal',
-								'value' => $elem['label']
-								)
-							)
-					);
-					$elements[] = $element;
-				}
-			}
-			
-	}
+                                        // type of new dimension
+                                        $element[$eurl] = array(
+                                                $type => array(
+                                                        array(
+                                                                'type' => 'uri',
+                                                                'value' => $url
+                                                                )
+                                                        ),
+                                                $label => array(
+                                                        array(
+                                                                'type' => 'literal',
+                                                                'value' => $elem['label']
+                                                                )
+                                                        )
+                                        );
+                                        $elements[] = $element;
+                                }
+                        }
+                        
+        }
         
     /*  // create incidence
         $element = array();
@@ -397,7 +395,7 @@ class DataCubeImporter extends Importer
         
         foreach ($elements as $elem) {
            //DEBUG: 
-		   //print_r($elem);
+                   //print_r($elem);
            $ontowiki->selectedModel->addMultipleStatements($elem);
         }
 
@@ -433,17 +431,17 @@ class DataCubeImporter extends Importer
         
         // append 
         $values = array();
-		
+                
         foreach($dimensions as $url => $dim){
-		    //the same "uribase" case as in the dimensions, ignore it 
+                    //the same "uribase" case as in the dimensions, ignore it 
             if($url == "uribase" || $url == "datastructure" || $url == "dataset") 
-				continue;
-			else {
-				$values[] = array(
-					'type' => 'uri',
-					'value' => $url == "measure" ? $dim['uri']."_CS" : $url."_CS" //CS for ComponentSpecification
-				);
-			}
+                                continue;
+                        else {
+                                $values[] = array(
+                                        'type' => 'uri',
+                                        'value' => $url == "measure" ? $dim['uri']."_CS" : $url."_CS" //CS for ComponentSpecification
+                                );
+                        }
         }
         
         // merge values
@@ -459,8 +457,8 @@ class DataCubeImporter extends Importer
         
         // save to store
         $ontowiki = OntoWiki::getInstance();
-		//DEBUG: 
-		//print_r($element);
+                //DEBUG: 
+                //print_r($element);
         $ontowiki->selectedModel->addMultipleStatements($element);
     }
 
@@ -476,8 +474,8 @@ class DataCubeImporter extends Importer
         // predicates
         $type = $this->componentConfig->class->type;
         $dataset = $this->componentConfig->qb->dataset;
-		//$incidence = $this->componentConfig->local->incidence->uri;
-		
+                //$incidence = $this->componentConfig->local->incidence->uri;
+                
         // objects
         $qbObservation = $this->componentConfig->qb->Observation;
         // item url base
@@ -543,26 +541,26 @@ class DataCubeImporter extends Importer
                         }
                         
                         // merge with dimensions
-						
-						//determine which datatype and set the incidence 
-						$aBuf = array();
-						if((preg_match('/[^0-9]/', $cell) <= 0)) { //integer case 
-							$aBuf['type'] = 'literal';
-							$aBuf['value'] = intval($cell);
-							$aBuf['datatype'] = 'http://www.w3.org/2001/XMLSchema#integer';
-						} else if((preg_match('/[^0-9.]/', $cell) <= 0)) {  //float casse
-							$aBuf['type'] = 'literal';
-							$aBuf['value'] = floatval($cell);
-							$aBuf['datatype'] = 'http://www.w3.org/2001/XMLSchema#float';
-						} else {//everything else is a literal
-							$aBuf['type'] = 'literal';
-							$aBuf['value'] = $cell;
-						}
+                                                
+                                                //determine which datatype and set the incidence 
+                                                $aBuf = array();
+                                                if((preg_match('/[^0-9]/', $cell) <= 0)) { //integer case 
+                                                        $aBuf['type'] = 'literal';
+                                                        $aBuf['value'] = intval($cell);
+                                                        $aBuf['datatype'] = 'http://www.w3.org/2001/XMLSchema#integer';
+                                                } else if((preg_match('/[^0-9.]/', $cell) <= 0)) {  //float casse
+                                                        $aBuf['type'] = 'literal';
+                                                        $aBuf['value'] = floatval($cell);
+                                                        $aBuf['datatype'] = 'http://www.w3.org/2001/XMLSchema#float';
+                                                } else {//everything else is a literal
+                                                        $aBuf['type'] = 'literal';
+                                                        $aBuf['value'] = $cell;
+                                                }
                         $element[$eurl] = array_merge(
                             $itemDims,
                             array( //its a measure 
                                 $dimensions["measure"]["uri"] => array(
-									$aBuf
+                                                                        $aBuf
                                 ),
                                 $type => array(
                                     array(
@@ -574,17 +572,17 @@ class DataCubeImporter extends Importer
                         );
                         // merge with attributes
                         $element[$eurl] = array_merge($element[$eurl],$attributes);
-						
-						//link to the dataset 
-						$element[$eurl] = array_merge($element[$eurl],array (
-							$dataset => array (
-								array(
-									'type' => 'uri',
-									'value' => $dimensions["dataset"]["uri"]
-									)
-								)
-							)
-						);
+                                                
+                                                //link to the dataset 
+                                                $element[$eurl] = array_merge($element[$eurl],array (
+                                                        $dataset => array (
+                                                                array(
+                                                                        'type' => 'uri',
+                                                                        'value' => $dimensions["dataset"]["uri"]
+                                                                        )
+                                                                )
+                                                        )
+                                                );
                         
                         
 
@@ -595,7 +593,7 @@ class DataCubeImporter extends Importer
                         //die;
 
                         $count++;
-                        if($count%10 == 0){
+                        if($count%1000 == 0){
                             $this->logEvent("Total triples saved: ".$count.". Still working..");
                         }
                         $ontowiki->selectedModel->addMultipleStatements($element);
@@ -609,6 +607,4 @@ class DataCubeImporter extends Importer
         //print_r( $dims );
         //echo "</pre>";
     }
-
-
 }

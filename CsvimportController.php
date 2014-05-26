@@ -28,20 +28,12 @@ class CsvimportController extends OntoWiki_Controller_Component
 
         // remove navigation tab
         OntoWiki::getInstance()->getNavigation()->disableNavigation();
-
-        // authenticate as Admin
-        // TODO: grant permissions to edit everything to anonym
-        $erfurt = $this->_owApp->erfurt;
-        $username   = 'Admin';
-        $password   = '';
-        $authResult = $erfurt->authenticate($username, $password);
     }
 
     public function indexAction()
     {
         $this->_forward('upload');
     }
-
 
     public function processuriAction()
     {
@@ -441,6 +433,8 @@ class CsvimportController extends OntoWiki_Controller_Component
     }
 
     protected function _createRandomModel($ckanResourceId) {
+        //user must be authorized!
+        
         //generate model name
         //$modelName = 'http://csv2rdf.aksw.org/' . md5($ckanResourceUri) . '/' . time();
         $modelName = 'http://csv2rdf.aksw.org/' . $ckanResourceId;
@@ -451,7 +445,7 @@ class CsvimportController extends OntoWiki_Controller_Component
         $this->_storeAdapter->createModel($modelName);
         $model = $this->_store->getModel($modelName);
 
-        $this->_ac           = Erfurt_App::getInstance(false)->getAc();
+        $this->_ac = Erfurt_App::getInstance(false)->getAc();
         $this->_ac->setUserModelRight($modelName, 'view', 'grant');
         $this->_ac->setUserModelRight($modelName, 'edit', 'grant');
 
