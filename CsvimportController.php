@@ -273,7 +273,7 @@ class CsvimportController extends OntoWiki_Controller_Component
         $sysOnt     = $this->_owApp->erfurt->getStore()->getModel($sysontUri, false);
 
         $query = new Erfurt_Sparql_SimpleQuery();
-        $query->setProloguePart(' SELECT  ?configUri ?configLabel ?configuration') ;
+        $query->setSelectClause(' SELECT  ?configUri ?configLabel ?configuration') ;
         $query->setWherePart('
                     WHERE { ?configUri a <' . $sysontUri . 'CSVImportConfig> .
                             ?configUri <http://www.w3.org/2000/01/rdf-schema#label> ?configLabel .
