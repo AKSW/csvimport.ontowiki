@@ -3,7 +3,7 @@
  * This file is part of the {@link http://ontowiki.net OntoWiki} project.
  *
  * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
- * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @license   http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 
 /**
@@ -35,7 +35,7 @@ class CsvimportPlugin extends OntoWiki_Plugin
         if ($event->isModel) {
             $url = new OntoWiki_Url(array('controller' => 'csvimport'), array());
             $menu = $event->menu;
-            $menu->appendEntry('Import CSV Data', (string) $url);
+            $menu->appendEntry('Import CSV Data', (string)$url);
         }
 
         return true;

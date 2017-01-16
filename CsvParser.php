@@ -1,86 +1,82 @@
 <?php
-require_once 'lib/IteratorReader.php';
 
 /**
- *  @category		component
- *  @package        csvimport
- *  @author			Michael Martin martin@informatik.uni-leipzig.de
+ *  @category   component
+ *  @package    csvimport
+ *  @author     Michael Martin martin@informatik.uni-leipzig.de
  */
 class CsvParser
 {
     //a constant
     const error_character = '\\uFFFD';
 
-	/**
-	 *	readed csvFile represented ar associated array
-	 *	@var array
-	 *  @access private
-     *  @author			Michael Martin martin@informatik.uni-leipzig.de
-	 */
+    /**
+     *  readed  csvFile represented ar associated array
+     *  @var    array
+     *  @access private
+     *  @author Michael Martin martin@informatik.uni-leipzig.de
+     */
     private $csvMap;
 
-
-	/**
-	 * This is the constructor.It try to open the csv file.The method throws an exception
-	 * on failure.
-	 *
-	 * @access public
-	 * @param str $fileName The csv file.
-     * @author			Michael Martin martin@informatik.uni-leipzig.de
-	 *
-	 * @throws Exception
-	 */
-    public function __construct($fileName = "", $separator = ',', $useHeaders = false ) {
-
+    /**
+     * This is the constructor.It try to open the csv file.The method throws an exception
+     * on failure.
+     *
+     * @access  public
+     * @param   str $fileName The csv file.
+     * @author  Michael Martin martin@informatik.uni-leipzig.de
+     *
+     * @throws Exception
+     */
+    public function __construct($fileName = "", $separator = ',', $useHeaders = false )
+    {
         //preventing some limitations
-        ini_set("max_execution_time","600");
-        ini_set("memory_limit","1536M");
-        ini_set("auto_detect_line_endings",TRUE);
+        ini_set("max_execution_time", "600");
+        ini_set("memory_limit", "1536M");
+        ini_set("auto_detect_line_endings", true);
 
         //initialising some class attributes
         $this->csvMap = array();
 
         //parse Map and check status
         $this->csvMap = $this->readCSV($fileName, $separator, $useHeaders);
-		if( empty ($this->csvMap) )
-			throw new Exception( 'The file "'.$fileName.'" cannot be readed or is empty.' );
+        if(empty($this->csvMap) ) {
+            throw new Exception('The file "'.$fileName.'" cannot be readed or is empty.');
+        }
     }
 
 
 
-	/**
-	 * Getter of the CSV Map
-	 *
-	 * @access public
-	 * @return array $csvMap.
-	 */
-    public function getParsedFile () {
+    /**
+     * Getter of the CSV Map
+     *
+     * @access public
+     * @return array $csvMap.
+     */
+    public function getParsedFile ()
+    {
         return $this->csvMap;
     }
 
+//
+// Private Functions
+//
 
-
-
-
-#########################################################
-# Private Functions
-#########################################################
-
-	/**
-	 * It try to open the csv file.The method throws an exception
-	 *
-	 * @access private
-	 * @param str $fileName The csv file.
-	 */
-    private function readCSV($fileName, $separator = ",", $useHeaders = false) {
-
-        $csvReader = new File_CSV_IteratorReader($fileName, $separator) ;
+    /**
+     * It try to open the csv file.The method throws an exception
+     *
+     * @access private
+     * @param str $fileName The csv file.
+     */
+    private function readCSV ($fileName, $separator = ",", $useHeaders = false)
+    {
+        $csvReader = new File_CSV_IteratorReader($fileName, $separator);
         return $csvReader->toArray($useHeaders);
     }
 
-#########################################################
-# TODO: Maybe these following function could be used in further workflows
-#########################################################
+//
+// TODO: Maybe these following function could be used in further workflows
+//
 
     // Replaces all byte sequences that need escaping. Characters that can
     // remain unencoded in N-Triples are not touched by the regex. The
@@ -97,22 +93,35 @@ class CsvParser
     // The regex accepts multi-byte sequences that don't have the correct
     // number of continuation bytes (0x80-0xBF). This is handled by the
     // callback.
-    private function escape( $str ) {
+    private function escape( $str )
+    {
         return preg_replace_callback(
             "/[\\x00-\\x1F\\x22\\x5C\\x7F]|[\\x80-\\xBF]|[\\xC0-\\xFF][\\x80-\\xBF]*/",
             array('Transformer','escape_callback'),
-            $str);
+            $str
+        );
     }
 
-    private static function escape_callback($matches) {
+    private static function escape_callback($matches)
+    {
         $encoded_character = $matches[0];
         $byte = ord($encoded_character[0]);
         // Single-byte characters (0xxxxxxx, hex 00-7E)
-        if ($byte == 0x09) return "\\t";
-        if ($byte == 0x0A) return "\\n";
-        if ($byte == 0x0D) return "\\r";
-        if ($byte == 0x22) return "\\\"";
-        if ($byte == 0x5C) return "\\\\";
+        if ($byte == 0x09) {
+            return "\\t";
+        }
+        if ($byte == 0x0A) {
+            return "\\n";
+        }
+        if ($byte == 0x0D) {
+            return "\\r";
+        }
+        if ($byte == 0x22) {
+            return "\\\"";
+        }
+        if ($byte == 0x5C) {
+            return "\\\\";
+        }
         if ($byte < 0x20 || $byte == 0x7F) {
             // encode as \u00XX
             return "\\u00" . sprintf("%02X", $byte);
@@ -175,7 +184,8 @@ class CsvParser
             ($bytes == 3 && $codepoint <= 0x7FF) ||
             ($bytes == 4 && $codepoint <= 0xFFFF) ||
             ($bytes == 5 && $codepoint <= 0x1FFFFF) ||
-            ($bytes == 6 && $codepoint <= 0x3FFFFF)) {
+            ($bytes == 6 && $codepoint <= 0x3FFFFF)
+        ) {
             return Transformer::error_character . $rest;
         }
 
@@ -203,4 +213,3 @@ class CsvParser
         return Transformer::error_character . $rest;
     }
 }
-?>

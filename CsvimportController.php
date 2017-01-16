@@ -4,7 +4,7 @@
  * This file is part of the {@link http://ontowiki.net OntoWiki} project.
  *
  * @copyright Copyright (c) 2008, {@link http://aksw.org AKSW}
- * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @license   http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 
 /**
@@ -232,14 +232,14 @@ class CsvimportController extends OntoWiki_Controller_Component
     {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-        
+
         $config = $this->_owApp->getConfig();
         $path = $config->log->path;
         $contents = "";
         $filename = $path.'importer.log';
         $fp = fopen($filename, 'r');
         $contents = fread($fp, filesize($filename));
-        fclose($fp);        
+        fclose($fp);
         echo $contents;
     }
 
@@ -314,8 +314,8 @@ class CsvimportController extends OntoWiki_Controller_Component
             $fp = fopen($dir.$name.'.cfg', 'w');
             fwrite($fp, $val);
             fclose($fp);
-        } 
-        
+        }
+
     }
 
     protected function processfileAction(){
