@@ -1,0 +1,12 @@
+{
+    "name": "aksw/csvimport.ontowiki",
+    "type": "ontowiki-extension",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Natanael Arndt",
+            "email": "arndtn@gmail.com"
+        }
+    ],
+    "require": {}
+}
