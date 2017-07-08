@@ -5,6 +5,9 @@
  *  @package    csvimport
  *  @author     Michael Martin martin@informatik.uni-leipzig.de
  */
+
+require_once('lib\IteratorReader.php');
+
 class CsvParser
 {
     //a constant
